@@ -1360,19 +1360,12 @@ export default function LielashopMakeup() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setFeaturedIndex((prev) => (prev + 1) % products.length);
-    }, 3500);
-    return () => clearInterval(interval);
-  }, []);
-
   const featuredProducts = [
-    products[featuredIndex % products.length],
-    products[(featuredIndex + 1) % products.length],
-    products[(featuredIndex + 2) % products.length],
-  ];
+  products[45],
+  products[113],
+  products[2],
+  products[50]
+];
 
   const addToCart = (product) => {
     setCart((prev) => {
@@ -1511,14 +1504,16 @@ const handleFavoriteClick = (product) => {
       {/* FAVORITOS */}
       <section className="p-6">
         <h2 className="text-2xl font-bold text-pink-600 mb-4">Favoritos</h2>
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {featuredProducts.map((p) => (
   <div
-    key={p.id}
+    key={`fav-${p.id}`}
     onClick={() => handleFavoriteClick(p)}
-    className="bg-white rounded-xl shadow cursor-pointer hover:scale-[1.02] transition"
+  className="bg-white rounded-xl shadow cursor-pointer hover:scale-[1.02] transition h-full flex flex-col overflow-hidden"
   >
-              <ImageCarousel images={p.images || []} />
+  <div className="h-40 overflow-hidden">
+  <ImageCarousel images={p.images || []} />
+</div>
               <div className="p-4">
                 <p className="font-semibold">{p.name}</p>
                 <p className="text-pink-500 font-bold">{p.price}</p>
@@ -1593,7 +1588,7 @@ const handleFavoriteClick = (product) => {
       </button>
 
       {isOpen && (
-        <div className="grid md:grid-cols-3 gap-4 mt-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
           {items.length === 0 ? (
             <p className="text-gray-400">Próximamente productos</p>
           ) : (
@@ -1604,7 +1599,7 @@ const handleFavoriteClick = (product) => {
   className="bg-white rounded-2xl shadow-md hover:shadow-lg transition p-3 scroll-mt-24"
 >
                <ImageCarousel images={product.images} />
-                <div className="p-4">
+                <div className="p-2">
                   <p className="font-semibold">{product.name}</p>
 
                   {product.description && (
@@ -1634,7 +1629,7 @@ const handleFavoriteClick = (product) => {
 
       {/* BANNER FRASE */}
       <section className="max-w-7xl mx-auto px-6 py-8">
-        <div className="rounded-2xl bg-gradient-to-r from-pink-200 via-pink-100 to-rose-100 py-10 text-center shadow-sm">
+        <div className="rounded-2xl bg-linear-to-r from-pink-200 via-pink-100 to-rose-100 py-10 text-center shadow-sm">
           <p className="text-pink-600 font-medium text-lg">
             Cada producto resalta tu belleza única ✨
           </p>
@@ -1709,8 +1704,7 @@ const handleFavoriteClick = (product) => {
       {/* FOOTER */}
       <footer className="border-t border-pink-200 bg-white py-8 text-center space-y-3">
         <p className="font-semibold">Lielashop Makeup</p>
-        <p className="text-sm text-gray-500">Belleza y maquillaje</p>
-
+  
         <div className="flex justify-center gap-4 pt-2">
           <a href="https://www.instagram.com/lielashop_makeup" target="_blank">
             <InstagramIcon />
