@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-function ImageCarousel({ images = [] }) {
+function ImageCarousel({ images = [], featured = false }) {
   const [index, setIndex] = useState(0);
 
   if (!images.length) return null;
@@ -14,10 +14,16 @@ function ImageCarousel({ images = [] }) {
 
   return (
     <div className="relative">
-      <img
-        src={images[index]}
-        className="h-64 w-full object-cover rounded-xl"
-      />
+     <img
+  src={images[index]}
+  loading="lazy"
+  decoding="async"
+  className={`w-full rounded-xl ${
+    featured
+      ? "h-48 object-cover bg-white"
+      : "h-56 md:h-72 object-cover"
+  }`}
+/>
 
       {images.length > 1 && (
         <>
@@ -56,7 +62,7 @@ export default function LielashopMakeup() {
   {
     id: 1,
     name: "Tinta de labios fresa",
-    price: "COP 7,000",
+    price: "$ 7,000",
     category: "labios",
    
     images: [
@@ -66,7 +72,7 @@ export default function LielashopMakeup() {
   {
     id: 2,
     name: "Tinta Miss Betty",
-    price: "COP 7,000",
+    price: "$ 7,000",
     category: "labios",
     images: [
       "https://i.ibb.co/Zp5C3qTC/Captura-de-pantalla-2026-05-11-111947.png"
@@ -75,7 +81,7 @@ export default function LielashopMakeup() {
   {
     id: 3,
     name: "Lip gloss con llavero",
-    price: "COP 18,000",
+    price: "$ 18,000",
     category: "labios",
     images: [
     "https://i.ibb.co/rf1XCmjr/image.png"
@@ -84,7 +90,7 @@ export default function LielashopMakeup() {
   {
     id: 4,
     name: "Brillo mágico nude",
-    price: "COP 7,000",
+    price: "$ 7,000",
     category: "labios",
     images: [
     "https://i.ibb.co/LwWjsJM/image.png"
@@ -93,7 +99,7 @@ export default function LielashopMakeup() {
   {
     id: 5,
     name: "Lip oil juicy",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "labios",
     images: [
     "https://i.ibb.co/zTXgY73B/image.png"
@@ -102,7 +108,7 @@ export default function LielashopMakeup() {
   {
     id: 6,
     name: "Lápiz de labios Samy",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "labios",
      images: [
     "https://i.ibb.co/1txPz4Kv/image.png"
@@ -111,7 +117,7 @@ export default function LielashopMakeup() {
   {
     id: 7,
     name: "Tinta de labios Kiss",
-    price: "COP 9,000",
+    price: "$ 9,000",
     category: "labios",
     images: [
     "https://i.ibb.co/H59X2PL/image.png"
@@ -120,7 +126,7 @@ export default function LielashopMakeup() {
   {
     id: 8,
     name: "Hidratante de labios",
-    price: "COP 5,000",
+    price: "$ 5,000",
     category: "labios",  
     images: [
     "https://i.ibb.co/JR9H2rGx/image.png"
@@ -129,7 +135,7 @@ export default function LielashopMakeup() {
   {
     id: 9,
     name: "Lip gloss osito con llavero",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "labios",
     images: [
     "https://i.ibb.co/Pzr993Pj/image.png"
@@ -138,7 +144,7 @@ export default function LielashopMakeup() {
   {
     id: 134,
     name: "Tinta de labios osito con llavero",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "labios",
     images: [
     "https://i.ibb.co/bMQVSgk8/image.png"
@@ -147,7 +153,7 @@ export default function LielashopMakeup() {
   {
     id: 10,
     name: "Lip gloss con llavero",
-    price: "COP 10,000",
+    price: "$ 10,000",
     category: "labios",
     images: [
     "https://i.ibb.co/DfkWSGqs/image.png"
@@ -156,7 +162,7 @@ export default function LielashopMakeup() {
   {
     id: 11,
     name: "Lip gloss con color SFR",
-    price: "COP 13,000",
+    price: "$ 13,000",
     category: "labios",
     images: [
     "https://i.ibb.co/ksk94d7X/image.png",
@@ -166,7 +172,7 @@ export default function LielashopMakeup() {
   {
     id: 12,
     name: "Lip gloss LIFTER",
-    price: "COP 10,000",
+    price: "$ 10,000",
     category: "labios",
     images: [
     "https://i.ibb.co/wNX9v08P/image.png",
@@ -176,7 +182,7 @@ export default function LielashopMakeup() {
   {
     id: 13,
     name: "Lip gloss Fat Oil Maike",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "labios",
     images: [
     "https://i.ibb.co/DDKYJ9d8/image.png",
@@ -186,7 +192,7 @@ export default function LielashopMakeup() {
   {
     id: 14,
     name: "Labial hidratante",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "labios",
     images: [
     "https://i.ibb.co/nMbkFs4S/image.png",
@@ -196,7 +202,7 @@ export default function LielashopMakeup() {
   {
     id: 15,
     name: "Lip gloss mágico",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "labios",
     images: [
     "https://i.ibb.co/33rRSBM/image.png"
@@ -205,7 +211,7 @@ export default function LielashopMakeup() {
   {
     id: 16,
     name: "Tinta de labios",
-    price: "COP 7,000",
+    price: "$ 7,000",
     category: "labios",
     images: [
     "https://i.ibb.co/TDtX0s6r/image.png"
@@ -214,7 +220,7 @@ export default function LielashopMakeup() {
   {
     id: 17,
     name: "Tinta de labios love",
-    price: "COP 7,000",
+    price: "$ 7,000",
     category: "labios",
     images: [
     "https://i.ibb.co/n8kwNPch/image.png"
@@ -223,7 +229,7 @@ export default function LielashopMakeup() {
   {
     id: 18,
     name: "Lip gloss Magic Flora",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "labios",
     images: [
     "https://i.ibb.co/QvHcGxTD/image.png"
@@ -232,7 +238,7 @@ export default function LielashopMakeup() {
   {
     id: 19,
     name: "Tinta de labios Magic",
-    price: "COP 7,000",
+    price: "$ 7,000",
     category: "labios",
     images: [
     "https://i.ibb.co/YTZtRKzr/image.png"
@@ -241,7 +247,7 @@ export default function LielashopMakeup() {
   {
     id: 20,
     name: "Lip gloss Magic Kiss",
-    price: "COP 7,000",
+    price: "$ 7,000",
     category: "labios",
     images: [
     "https://i.ibb.co/yn7B0R7b/image.png"
@@ -250,7 +256,7 @@ export default function LielashopMakeup() {
   {
     id: 21,
     name: "Lip gloss Fat Oil",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "labios",
     images: [
     "https://i.ibb.co/xSSBN3Zg/image.png",
@@ -260,7 +266,7 @@ export default function LielashopMakeup() {
   {
     id: 22,
     name: "Lápiz de labios Jumbo Karité",
-    price: "COP 7,000",
+    price: "$ 7,000",
     category: "labios",
     images: [
     "https://i.ibb.co/1HM39Dm/image.png",
@@ -270,7 +276,7 @@ export default function LielashopMakeup() {
   {
     id: 23,
     name: "Labial en barra matte",
-    price: "COP 10,000",
+    price: "$ 10,000",
     category: "labios",
     images: [
     "https://i.ibb.co/RGDX3WQJ/image.png",
@@ -280,7 +286,7 @@ export default function LielashopMakeup() {
   {
     id: 24,
     name: "Tinta de labios Milk",
-    price: "COP 9,000",
+    price: "$ 9,000",
     category: "labios",
     images: [
     "https://i.ibb.co/FbtZw4kW/image.png"
@@ -289,7 +295,7 @@ export default function LielashopMakeup() {
   {
     id: 25,
     name: "Tinta Bene Tint",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "labios",
     images: [
     "https://i.ibb.co/0yXv9t1b/image.png"
@@ -298,7 +304,7 @@ export default function LielashopMakeup() {
   {
     id: 26,
     name: "Lip gloss Honey",
-    price: "COP 9,000",
+    price: "$ 9,000",
     category: "labios",
     images: [
     "https://i.ibb.co/7t4rgdkd/image.png"
@@ -307,7 +313,7 @@ export default function LielashopMakeup() {
   {
     id: 27,
     name: "Tinta de labios",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "labios",
     images: [
     "https://i.ibb.co/9kHy9LxD/image.png"
@@ -316,7 +322,7 @@ export default function LielashopMakeup() {
   {
     id: 28,
     name: "Tinta fresita",
-    price: "COP 7,000",
+    price: "$ 7,000",
     category: "labios",
     images: [
     "https://i.ibb.co/W42znN1L/image.png"
@@ -325,7 +331,7 @@ export default function LielashopMakeup() {
   {
     id: 29,
     name: "Labial en barra",
-    price: "COP 7,000",
+    price: "$ 7,000",
     category: "labios",
     images: [
     "https://i.ibb.co/M5JJkxrc/image.png",
@@ -335,7 +341,7 @@ export default function LielashopMakeup() {
   {
     id: 30,
     name: "Tinta DEWY",
-    price: "COP 9,000",
+    price: "$ 9,000",
     category: "labios",
     images: [
     "https://i.ibb.co/bj1sKCwM/image.png"
@@ -344,7 +350,7 @@ export default function LielashopMakeup() {
   {
     id: 31,
     name: "Lip gloss",
-    price: "COP 9,500",
+    price: "$ 9,500",
     category: "labios",
     images: [
     "https://i.ibb.co/S7sgjY1C/image.png",
@@ -355,7 +361,7 @@ export default function LielashopMakeup() {
   {
     id: 32,
     name: "Lip gloss",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "labios",
     images: [
     "https://i.ibb.co/FLkVjMZS/image.png"
@@ -364,7 +370,7 @@ export default function LielashopMakeup() {
   {
     id: 33,
     name: "Lip gloss Victoria",
-    price: "COP 9,500",
+    price: "$ 9,500",
     category: "labios",
     images: [
     "https://i.ibb.co/m528mfFv/image.png"
@@ -373,7 +379,7 @@ export default function LielashopMakeup() {
   {
     id: 34,
     name: "Lip gloss Love",
-    price: "COP 6,000",
+    price: "$ 6,000",
     category: "labios",
     images: [
     "https://i.ibb.co/Y4F1RwbW/image.png"
@@ -382,7 +388,7 @@ export default function LielashopMakeup() {
   {
     id: 35,
     name: "Lip gloss con aplicador Jumbo",
-    price: "COP 7,000",
+    price: "$ 7,000",
     category: "labios",
     images: [
     "https://i.ibb.co/PZMRTrQh/image.png",
@@ -392,7 +398,7 @@ export default function LielashopMakeup() {
   {
     id: 36,
     name: "Labial líquido",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "labios",
     images: [
     "https://i.ibb.co/QyCVpr5/image.png",
@@ -406,7 +412,7 @@ export default function LielashopMakeup() {
   {
     id: 37,
     name: "Protector solar retinol",
-    price: "COP 12,000",
+    price: "$ 12,000",
     category: "cuidado_facial",
     images: [
     "https://i.ibb.co/5hHT79t5/image.png"
@@ -415,7 +421,7 @@ export default function LielashopMakeup() {
   {
     id: 38,
     name: "Protector solar",
-    price: "COP 7,000",
+    price: "$ 7,000",
     category: "cuidado_facial",
     images: [
     "https://i.ibb.co/j9G85Bjn/image.png"
@@ -424,7 +430,7 @@ export default function LielashopMakeup() {
   {
     id: 39,
     name: "Protector solar de arroz",
-    price: "COP 10,000",
+    price: "$ 10,000",
     category: "cuidado_facial",
     images: [
     "https://i.ibb.co/gMPZphCc/image.png"
@@ -433,7 +439,7 @@ export default function LielashopMakeup() {
   {
     id: 40,
     name: "Protector solar Rimocoo",
-    price: "COP 9,000",
+    price: "$ 9,000",
     category: "cuidado_facial",
     images: [
     "https://i.ibb.co/3ydZ7Dwb/image.png"
@@ -442,7 +448,7 @@ export default function LielashopMakeup() {
   {
     id: 41,
     name: "Protector solar en spray con arroz",
-    price: "COP 22,000",
+    price: "$ 22,000",
     category: "cuidado_facial",
     images: [
     "https://i.ibb.co/BKQzW9KT/image.png"
@@ -451,7 +457,7 @@ export default function LielashopMakeup() {
   {
     id: 42,
     name: "Kit ácido salicílico",
-    price: "COP 28,000",
+    price: "$ 28,000",
     category: "cuidado_facial",
     description: "Limpiador + Serum + Crema localizadora",
     images: [
@@ -461,7 +467,7 @@ export default function LielashopMakeup() {
   {
     id: 43,
     name: "Kit de cuidado facial viajero x 5 piezas de rosas",
-    price: "COP 34,000",
+    price: "$ 34,000",
     category: "cuidado_facial",
     images: [
     "https://i.ibb.co/LX7SsGBk/image.png"
@@ -470,7 +476,7 @@ export default function LielashopMakeup() {
   {
     id: 44,
     name: "Kit facial vitamina C",
-    price: "COP 47,000",
+    price: "$ 47,000",
     category: "cuidado_facial",
     description: "Limpiador + Crema + Serum + Contorno de ojos",
     images: [
@@ -480,7 +486,7 @@ export default function LielashopMakeup() {
   {
     id: 45,
     name: "Kit de arroz facial sencillo",
-    price: "COP 43,000",
+    price: "$ 43,000",
     category: "cuidado_facial",
     description: "Limpiador + Crema hidratante + Serum + Contorno de ojos",
     images: [
@@ -490,7 +496,7 @@ export default function LielashopMakeup() {
   {
     id: 46,
     name: "Kit centella asiática",
-    price: "COP 43,000",
+    price: "$ 43,000",
     category: "cuidado_facial",
     description: "Limpiador + Crema hidratante + Serum + Contorno de ojos",
     images: [
@@ -500,7 +506,7 @@ export default function LielashopMakeup() {
   {
     id: 47,
     name: "Kit de arroz facial completo",
-    price: "COP 66,000",
+    price: "$ 66,000",
     category: "cuidado_facial",
     description: "Limpiador + Crema + Serum + Contorno de ojos + Tónico + Protector solar",
     images: [
@@ -510,7 +516,7 @@ export default function LielashopMakeup() {
   {
     id: 48,
     name: "Protector solar de vitamina C",
-    price: "COP 7,000",
+    price: "$ 7,000",
     category: "cuidado_facial",
     images: [
     "https://i.ibb.co/dJpPGZXT/image.png"
@@ -519,7 +525,7 @@ export default function LielashopMakeup() {
   {
     id: 49,
     name: "Kit de arroz sencillo",
-    price: "COP 39,000",
+    price: "$ 39,000",
     category: "cuidado_facial",
     description: "Limpiador facial + Crema hidratante + Serum",
     images: [
@@ -533,7 +539,7 @@ export default function LielashopMakeup() {
   {
     id: 50,
     name: "Pestañina colosal",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Opx7cGHHY-TGOgCdT7q.jpg"
@@ -542,7 +548,7 @@ export default function LielashopMakeup() {
   {
     id: 51,
     name: "Lápiz jumbo doble para ojos",
-    price: "COP 5,000",
+    price: "$ 5,000",
     category: "cejas_pestanas",
     images: [
     "https://i.ibb.co/vCPjjDmr/image.png"
@@ -551,7 +557,7 @@ export default function LielashopMakeup() {
   {
     id: 52,
     name: "Betún de cejas Gulf",
-    price: "COP 12,000",
+    price: "$ 12,000",
     category: "cejas_pestanas",
     images: [
     "https://i.ibb.co/MygZnykp/image.png",
@@ -561,7 +567,7 @@ export default function LielashopMakeup() {
   {
     id: 53,
     name: "Sombra de cejas x3 tonos",
-    price: "COP 9,000",
+    price: "$ 9,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OnK0mQD7BfbY65OgIgy.jpg"
@@ -570,7 +576,7 @@ export default function LielashopMakeup() {
   {
     id: 54,
     name: "Lápiz 2 en 1 Engol",
-    price: "COP 2,000",
+    price: "$ 2,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OnNVpcc5de_4LWfo_iw.jpg"
@@ -579,7 +585,7 @@ export default function LielashopMakeup() {
   {
     id: 55,
     name: "Lápiz cejas café",
-    price: "COP 2,000",
+    price: "$ 2,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OnNVruO3VJoShPp3yQ7.jpg",
@@ -589,7 +595,7 @@ export default function LielashopMakeup() {
   {
     id: 56,
     name: "Delineador líquido negro",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OnK2Dt5bZ1GoYmkxEqM.jpg"
@@ -598,7 +604,7 @@ export default function LielashopMakeup() {
   {
     id: 57,
     name: "Pinza de cejas tornasol",
-    price: "COP 4,000",
+    price: "$ 4,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OaLjmxnBQ2XPatzg0N0.jpg"
@@ -607,7 +613,7 @@ export default function LielashopMakeup() {
   {
     id: 58,
     name: "Encrespador de pestañas",
-    price: "COP 12,000",
+    price: "$ 12,000",
     category: "cejas_pestanas",
     images: [
     "https://i.ibb.co/Kc1hbJVV/image.png"
@@ -616,7 +622,7 @@ export default function LielashopMakeup() {
   {
     id: 59,
     name: "Pestañina negra Lucky Model",
-    price: "COP 10,000",
+    price: "$ 10,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Oo_lIR53UomO3nagGCJ.jpg",
@@ -626,7 +632,7 @@ export default function LielashopMakeup() {
   {
     id: 60,
     name: "Sombras de cejas Powder x3 tonos",
-    price: "COP 10,000",
+    price: "$ 10,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OoaEQaibpuRncQ3UZUA.jpg"
@@ -635,7 +641,7 @@ export default function LielashopMakeup() {
   {
     id: 61,
     name: "Pestañina negra",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Oo_lPgEir40zCvYhUoO.jpg"
@@ -644,7 +650,7 @@ export default function LielashopMakeup() {
   {
     id: 62,
     name: "Serum crecimiento y fortalecimiento de pestañas Bioaqua",
-    price: "COP 10,000",
+    price: "$ 10,000",
     category: "cejas_pestanas",
     images: [
     "https://i.ibb.co/XrGGMWSk/image.png"
@@ -653,7 +659,7 @@ export default function LielashopMakeup() {
   {
     id: 63,
     name: "Gel de cejas con color",
-    price: "COP 9,000",
+    price: "$ 9,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OnK1xauYObcMQLLheJS.jpg"
@@ -662,7 +668,7 @@ export default function LielashopMakeup() {
   {
     id: 64,
     name: "Encrespador de pestañas metálico",
-    price: "COP 9,000",
+    price: "$ 9,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OrKbub4BrK8a58hx0tn.jpg"
@@ -671,7 +677,7 @@ export default function LielashopMakeup() {
   {
     id: 65,
     name: "Pestañina negra Pick",
-    price: "COP 7,000",
+    price: "$ 7,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OrKbuYR5BlQ4UrEhPMx.jpg"
@@ -680,7 +686,7 @@ export default function LielashopMakeup() {
   {
     id: 66,
     name: "Pestañina negra Miss Betty",
-    price: "COP 8,000",
+    price: "$ 8,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OrKbuZNmez5x4NysxVn.jpg"
@@ -689,7 +695,7 @@ export default function LielashopMakeup() {
   {
     id: 67,
     name: "Encrespador MTK",
-    price: "COP 10,000",
+    price: "$ 10,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OrKbu_Ffg3gCk3Axh6m.jpg"
@@ -698,7 +704,7 @@ export default function LielashopMakeup() {
   {
     id: 68,
     name: "Delineador de ojos doble punta",
-    price: "COP 6,000",
+    price: "$ 6,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OrKU-_er83paPe9AHRZ.jpg"
@@ -707,7 +713,7 @@ export default function LielashopMakeup() {
   {
     id: 69,
     name: "Pestañina transparente de colágeno",
-    price: "COP 7,000",
+    price: "$ 7,000",
     category: "cejas_pestanas",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OrKTiOSuqhdzlw2A0vK.jpg"
@@ -716,7 +722,7 @@ export default function LielashopMakeup() {
     {
   id: 70,
   name: "Rubor compacto Romantic Ace Face",
-  price: "COP 8,000",
+  price: "$ 8,000",
   category: "rubor",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Opx7caJj_-8yjTNerWf.jpg",
@@ -726,7 +732,7 @@ export default function LielashopMakeup() {
 {
   id: 71,
   name: "2 en 1 rubor crema + rubor compacto",
-  price: "COP 12,000",
+  price: "$ 12,000",
   category: "rubor",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OevU5Cb_HS02QxjllZ6.jpg",
@@ -736,7 +742,7 @@ export default function LielashopMakeup() {
 {
   id: 72,
   name: "Rubor líquido aplicador jumbo Mocmallure",
-  price: "COP 10,000",
+  price: "$ 10,000",
   category: "rubor",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OgYBjF-fWW3OrMIK6Xx.jpg",
@@ -746,7 +752,7 @@ export default function LielashopMakeup() {
 {
   id: 73,
   name: "Rubor líquido Huda",
-  price: "COP 7,000",
+  price: "$ 7,000",
   category: "rubor",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Oo_lGhS1jiiqfvCy-zw.jpg",
@@ -756,7 +762,7 @@ export default function LielashopMakeup() {
 {
   id: 74,
   name: "Rubor crema Gulf",
-  price: "COP 8,000",
+  price: "$ 8,000",
   category: "rubor",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OkK4p4DbTo21Fs2hoF.jpg",
@@ -766,7 +772,7 @@ export default function LielashopMakeup() {
 {
   id: 75,
   name: "Rubor líquido estampita",
-  price: "COP 10,000",
+  price: "$ 10,000",
   category: "rubor",
     images: [
     "https://i.ibb.co/mCMYmqyM/image.png",
@@ -776,7 +782,7 @@ export default function LielashopMakeup() {
 {
   id: 76,
   name: "Rubor compacto Miss Fon",
-  price: "COP 9,000",
+  price: "$ 9,000",
   category: "rubor",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Opx7cRCnN2fEvCluofT.jpg"
@@ -785,7 +791,7 @@ export default function LielashopMakeup() {
 {
   id: 77,
   name: "Rubor compacto Always",
-  price: "COP 12,000",
+  price: "$ 12,000",
   category: "rubor",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OlqKQMNgUC2oIa6Y4od.jpg"
@@ -794,7 +800,7 @@ export default function LielashopMakeup() {
 {
   id: 78,
   name: "Rubor líquido aplicador jumbo Mocmallure",
-  price: "COP 10,000",
+  price: "$ 10,000",
   category: "rubor",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OewRiDB1XuKCpsPj7Mv.jpg",
@@ -804,7 +810,7 @@ export default function LielashopMakeup() {
 {
   id: 79,
   name: "Dúo rubor compacto SFR",
-  price: "COP 12,000",
+  price: "$ 12,000",
   category: "rubor",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OlinJ9KDHImt4q0kq4f.jpg"
@@ -813,7 +819,7 @@ export default function LielashopMakeup() {
 {
   id: 80,
   name: "Rubor compacto",
-  price: "COP 10,000",
+  price: "$ 10,000",
   category: "rubor",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OofoRG4O6sUrMoUoqOo.jpg",
@@ -823,7 +829,7 @@ export default function LielashopMakeup() {
 {
   id: 81,
   name: "Rubor en crema",
-  price: "COP 7,000",
+  price: "$ 7,000",
   category: "rubor",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Oo_vvz0vlHcl1DXfc1T.jpg",
@@ -833,7 +839,7 @@ export default function LielashopMakeup() {
 {
   id: 82,
   name: "Rubor compacto + iluminador",
-  price: "COP 12,000",
+  price: "$ 12,000",
   category: "rubor",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Opx7c_zNFkeu2hmbG_7.jpg"
@@ -842,7 +848,7 @@ export default function LielashopMakeup() {
 {
   id: 83,
   name: "Rubor líquido MY FACE",
-  price: "COP 7,000",
+  price: "$ 7,000",
   category: "rubor",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OkK5BCjra7GdRp2_CcZ.jpg",
@@ -852,7 +858,7 @@ export default function LielashopMakeup() {
 {
   id: 84,
   name: "Rubor compacto Romantic",
-  price: "COP 7,000",
+  price: "$ 7,000",
   category: "rubor",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Oo_lQ0vSRUiL2n5h16e.jpg",
@@ -862,7 +868,7 @@ export default function LielashopMakeup() {
 {
   id: 85,
   name: "Rubor mineralizado",
-  price: "COP 15,000",
+  price: "$ 15,000",
   category: "rubor",
     images: [
     "https://i.ibb.co/Lz1Tkty8/image.png"
@@ -871,7 +877,7 @@ export default function LielashopMakeup() {
 {
   id: 86,
   name: "Jelly tintas mágicas",
-  price: "COP 9,000",
+  price: "$ 9,000",
   category: "rubor",
   description: "Se activan con el pH",
     images: [
@@ -881,7 +887,7 @@ export default function LielashopMakeup() {
 {
   id: 87,
   name: "Rubor líquido aplicador grande",
-  price: "COP 10,000",
+  price: "$ 10,000",
   category: "rubor",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OrKd86ApWFmhvT2olT6.jpg",
@@ -891,7 +897,7 @@ export default function LielashopMakeup() {
 {
   id: 88,
   name: "Serum rubor con niacinamida Anik",
-  price: "COP 28,000",
+  price: "$ 28,000",
   category: "rubor",
     images: [
     "https://i.ibb.co/DHwPGbbJ/image.png",
@@ -901,7 +907,7 @@ export default function LielashopMakeup() {
     {
   id: 89,
   name: "Paleta de sombras + rubor e iluminadores",
-  price: "COP 43,000",
+  price: "$ 43,000",
   category: "sombras",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OnK0mVEYzRt3chT2JPt.jpg"
@@ -910,7 +916,7 @@ export default function LielashopMakeup() {
 {
   id: 90,
   name: "Paleta de maquillaje x70 tonos",
-  price: "COP 55,000",
+  price: "$ 55,000",
   category: "sombras",
     images: [
     "https://i.ibb.co/9kHgWPj6/image.png"
@@ -919,7 +925,7 @@ export default function LielashopMakeup() {
 {
   id: 91,
   name: "Paleta de sombras súper completa (25 tonos + rubor + contorno + polvo + iluminador)",
-  price: "COP 50,000",
+  price: "$ 50,000",
   category: "sombras",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Oo_lQ1Z9tE509saKsTh.jpg"
@@ -928,7 +934,7 @@ export default function LielashopMakeup() {
 {
   id: 92,
   name: "Paleta de sombras x12 tonos + iluminador, rubor y contorno",
-  price: "COP 25,000",
+  price: "$ 25,000",
   category: "sombras",
     images: [
     "https://i.ibb.co/3Ydz62gY/image.png"
@@ -937,7 +943,7 @@ export default function LielashopMakeup() {
 {
   id: 93,
   name: "Paleta de sombras x9 tonos",
-  price: "COP 16,000",
+  price: "$ 16,000",
   category: "sombras",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OlipKj0nZ0sJcwq42lT.jpg",
@@ -948,7 +954,7 @@ export default function LielashopMakeup() {
 {
   id: 94,
   name: "Kit de brochas kabuki",
-  price: "COP 20,000",
+  price: "$ 20,000",
   category: "sombras",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OrKTs7AnwDy6QbiJgLc.jpg",
@@ -959,7 +965,7 @@ export default function LielashopMakeup() {
     {
   id: 95,
   name: "Base de Anik",
-  price: "COP 45,000",
+  price: "$ 45,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OGlavhxBSqgqaZQzC5j.jpg"
@@ -968,7 +974,7 @@ export default function LielashopMakeup() {
 {
   id: 96,
   name: "Base líquida Fit",
-  price: "COP 8,000",
+  price: "$ 8,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Oo_lF1czWY1EA7_DUmL.jpg",
@@ -978,7 +984,7 @@ export default function LielashopMakeup() {
 {
   id: 97,
   name: "Base líquida Pro",
-  price: "COP 8,000",
+  price: "$ 8,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Oo_l1BIfITyLGihE5pe.jpg",
@@ -988,7 +994,7 @@ export default function LielashopMakeup() {
 {
   id: 98,
   name: "Base líquida con protección solar SPF 50",
-  price: "COP 10,000",
+  price: "$ 10,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Olip-FwZgEg_UeVl8dD.jpg",
@@ -998,7 +1004,7 @@ export default function LielashopMakeup() {
 {
   id: 99,
   name: "Base líquida alta cobertura Rimocco",
-  price: "COP 8,000",
+  price: "$ 8,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OnK1nHlrx1pfZYXaOKg.jpg",
@@ -1008,7 +1014,7 @@ export default function LielashopMakeup() {
 {
   id: 100,
   name: "Base líquida Paulis cobertura media",
-  price: "COP 12,000",
+  price: "$ 12,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OevU5F9ZHxu54KGmLsX.jpg",
@@ -1018,7 +1024,7 @@ export default function LielashopMakeup() {
 {
   id: 101,
   name: "Base líquida 36H",
-  price: "COP 8,000",
+  price: "$ 8,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OlirPS0gBxjCmPJ_jby.jpg",
@@ -1028,7 +1034,7 @@ export default function LielashopMakeup() {
 {
   id: 102,
   name: "Base líquida alta cobertura Pink Key",
-  price: "COP 20,000",
+  price: "$ 20,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Olip6gZ0_exc3L_zfe7.jpg",
@@ -1040,7 +1046,7 @@ export default function LielashopMakeup() {
 {
   id: 103,
   name: "Base líquida alta cobertura Miss Rose",
-  price: "COP 20,000",
+  price: "$ 20,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OrKd6qFahGAiTW5vjZV.jpg",
@@ -1050,7 +1056,7 @@ export default function LielashopMakeup() {
 {
   id: 104,
   name: "Corrector líquido Paulis alta cobertura",
-  price: "COP 18,000",
+  price: "$ 18,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OlioyIv_j_eEChe4Uo5.jpg",
@@ -1060,7 +1066,7 @@ export default function LielashopMakeup() {
 {
   id: 105,
   name: "Corrector líquido con brocha y aplicador Jumbo",
-  price: "COP 12,000",
+  price: "$ 12,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Olio_YLDyMnsewW-5Xl.jpg",
@@ -1070,7 +1076,7 @@ export default function LielashopMakeup() {
 {
   id: 106,
   name: "Corrector líquido Pro",
-  price: "COP 8,000",
+  price: "$ 8,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OmjuoHJDzHV_8X_tkRo.jpg",
@@ -1080,7 +1086,7 @@ export default function LielashopMakeup() {
 {
   id: 107,
   name: "Corrector líquido con esponjita",
-  price: "COP 10,000",
+  price: "$ 10,000",
   category: "bases_corrector",
     images: [
     "https://i.ibb.co/gLfYKy7L/image.png",
@@ -1090,7 +1096,7 @@ export default function LielashopMakeup() {
 {
   id: 108,
   name: "Corrector líquido alta cobertura",
-  price: "COP 10,000",
+  price: "$ 10,000",
   category: "bases_corrector",
     images: [
     "https://i.ibb.co/WWgmmgg0/image.png",
@@ -1100,7 +1106,7 @@ export default function LielashopMakeup() {
 {
   id: 109,
   name: "Corrector Súper Star Miss Betty con aplicador Jumbo",
-  price: "COP 10,000",
+  price: "$ 10,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Oliow3rbZvn7PehR7A2.jpg",
@@ -1110,7 +1116,7 @@ export default function LielashopMakeup() {
 {
   id: 110,
   name: "Corrector de Anik",
-  price: "COP 25,000",
+  price: "$ 25,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OrUStVJ6SUfbYrWXX8O.jpg"
@@ -1119,7 +1125,7 @@ export default function LielashopMakeup() {
 {
   id: 111,
   name: "Primer en gel fit",
-  price: "COP 8,000",
+  price: "$ 8,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Oo_lClsA99McceFQvqE.jpg"
@@ -1128,7 +1134,7 @@ export default function LielashopMakeup() {
 {
   id: 112,
   name: "Primer en gel HEDY",
-  price: "COP 8,000",
+  price: "$ 8,000",
   category: "bases_corrector",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OlipKAfuON-oSEM7c1y.jpg"
@@ -1137,7 +1143,7 @@ export default function LielashopMakeup() {
 {
   id: 113,
   name: "Polvos sueltos Pink Key",
-  price: "COP 18,000",
+  price: "$ 18,000",
   category: "polvos",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OlipGW_vpa4xNPasS6I.jpg",
@@ -1147,7 +1153,7 @@ export default function LielashopMakeup() {
 {
   id: 114,
   name: "Polvo compacto Paulis",
-  price: "COP 15,000",
+  price: "$ 15,000",
   category: "polvos",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OnNEHcH3mdhrJ1K8SMg.jpg",
@@ -1157,7 +1163,7 @@ export default function LielashopMakeup() {
 {
   id: 115,
   name: "Polvos sueltos",
-  price: "COP 12,000",
+  price: "$ 12,000",
   category: "polvos",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OnK1xkk7MARdIEdmsZB.jpg",
@@ -1167,7 +1173,7 @@ export default function LielashopMakeup() {
 {
   id: 116,
   name: "Polvo compacto Engol",
-  price: "COP 15,000",
+  price: "$ 15,000",
   category: "polvos",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-O_RuC1D01thcarDg6sC.jpg",
@@ -1177,7 +1183,7 @@ export default function LielashopMakeup() {
 {
   id: 117,
   name: "Polvo de hadas",
-  price: "COP 10,000",
+  price: "$ 10,000",
   category: "polvos",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OnO3FRqiNtvLFRyfeZa.jpg"
@@ -1186,7 +1192,7 @@ export default function LielashopMakeup() {
 {
   id: 118,
   name: "Polvo de hadas Lyvenna",
-  price: "COP 8,000",
+  price: "$ 8,000",
   category: "polvos",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Oo_lPJqM9I6G1R-j6KJ.jpg"
@@ -1195,7 +1201,7 @@ export default function LielashopMakeup() {
 {
   id: 119,
   name: "Polvo compacto",
-  price: "COP 10,000",
+  price: "$ 10,000",
   category: "polvos",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OnK25hSXk6vq5ph3jKY.jpg",
@@ -1205,7 +1211,7 @@ export default function LielashopMakeup() {
 {
   id: 120,
   name: "Polvo de hadas con pompón",
-  price: "COP 12,000",
+  price: "$ 12,000",
   category: "polvos",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OnK1x9ms5TTqwYJoeVk.jpg"
@@ -1214,7 +1220,7 @@ export default function LielashopMakeup() {
     {
   id: 121,
   name: "Gorros satin",
-  price: "COP 11,000",
+  price: "$ 11,000",
   category: "cabello",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-OrKTlKgg3BreLaiiqZF.jpg"
@@ -1223,7 +1229,7 @@ export default function LielashopMakeup() {
 {
   id: 122,
   name: "Keratina Ritual Botánico",
-  price: "COP 35,000",
+  price: "$ 35,000",
   category: "cabello",
   description: "El Ritual Botánico de Keratina es un tratamiento orgánico que se aplica lavando con champú de limpieza profunda, secando al 100%, aplicando la keratina a 5mm de la raíz, reposando por 45-90 min, secando sin cepillar, planchando en mechones finos y lavando el mismo día."
 ,
@@ -1234,7 +1240,7 @@ export default function LielashopMakeup() {
 {
   id: 123,
   name: "Shampoo de romero y eucalipto",
-  price: "COP 38,000",
+  price: "$ 38,000",
   category: "cabello",
   description: "Producto diseñado para el control de grasa y crecimiento intensivo del cabello. Ideal para cuero cabelludo graso o mixto con limpieza profunda sin maltratar las hebras."
 ,
@@ -1245,7 +1251,7 @@ export default function LielashopMakeup() {
 {
   id: 124,
   name: "Tratamiento intensivo Plex",
-  price: "COP 38,000",
+  price: "$ 38,000",
   category: "cabello",
   description: "Ideal para cabellos muy dañados, secos o procesados químicamente. Contiene aguacate y argán para máxima hidratación."
 ,
@@ -1256,7 +1262,7 @@ export default function LielashopMakeup() {
 {
   id: 125,
   name: "Mascarilla Bomba Botánica S.O.S",
-  price: "COP 38,000",
+  price: "$ 38,000",
   category: "cabello",
   description: "Tratamiento capilar intensivo para reparar cabellos severamente dañados, secos o quebradizos."
 ,
@@ -1267,7 +1273,7 @@ export default function LielashopMakeup() {
 {
   id: 126,
   name: "Laminado capilar",
-  price: "COP 35,000",
+  price: "$ 35,000",
   category: "cabello",
   description: "Tratamiento que crea una capa protectora, sellando la cutícula para brillo espejo, suavidad extrema y efecto liso sin frizz."
 ,
@@ -1278,7 +1284,7 @@ export default function LielashopMakeup() {
 {
   id: 127,
   name: "Gel para el cabello",
-  price: "COP 18,000",
+  price: "$ 18,000",
   category: "cabello"
 ,
     images: [
@@ -1288,7 +1294,7 @@ export default function LielashopMakeup() {
 {
   id: 128,
   name: "Shampoo de cebolla y argán",
-  price: "COP 38,000",
+  price: "$ 38,000",
   category: "cabello",
   description: "Tratamiento para estimular crecimiento, fortalecer la fibra capilar y reparar cabello maltratado o con procesos químicos."
 ,
@@ -1299,7 +1305,7 @@ export default function LielashopMakeup() {
 {
   id: 129,
   name: "Pinza flor hawaiana",
-  price: "COP 7,500",
+  price: "$ 7,500",
   category: "cabello",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Ore9xY4dS9ECY7OQpGR.jpg"
@@ -1308,7 +1314,7 @@ export default function LielashopMakeup() {
 {
   id: 130,
   name: "Pinza hawaiana 1",
-  price: "COP 7,500",
+  price: "$ 7,500",
   category: "cabello",
     images: [
     "https://i.ibb.co/6cNLLP4X/image.png"
@@ -1317,7 +1323,7 @@ export default function LielashopMakeup() {
 {
   id: 131,
   name: "Pinza hawaiana tornasol",
-  price: "COP 7,000",
+  price: "$ 7,000",
   category: "cabello",
     images: [
     "https://i.ibb.co/7JmTDKVd/image.png"
@@ -1326,7 +1332,7 @@ export default function LielashopMakeup() {
 {
   id: 132,
   name: "Pinza hawaiana 2",
-  price: "COP 7,600",
+  price: "$ 7,600",
   category: "cabello",
     images: [
     "https://i.ibb.co/4gjCBksJ/image.png"
@@ -1335,7 +1341,7 @@ export default function LielashopMakeup() {
 {
   id: 133,
   name: "Pinza hawaiana grande",
-  price: "COP 7,500",
+  price: "$ 7,500",
   category: "cabello",
     images: [
     "https://cdn.quicksell.co/-O0ncwakDXzFVGQRcU-L/products/-Ore9xbwPdZgM0-d5jWt.jpg"
@@ -1454,12 +1460,12 @@ const handleFavoriteClick = (product) => {
     <div className="bg-pink-50 min-h-screen text-gray-800">
 
       {/* HEADER */}
-      <header className="sticky top-0 z-40 bg-white border-b border-pink-200 h-20">
-        <div className="max-w-7xl mx-auto px-6 h-full flex items-center gap-3">
-          <img src={logoUrl} className={`rounded-full transition-all duration-300 ${scrolled ? "w-10 h-10" : "w-16 h-16"}`} />
+      <header className="sticky top-0 z-40 bg-white border-b border-pink-200 h-16">
+        <div className="max-w-7xl mx-auto px-4 h-full flex items-center gap-3">
+          <img src={logoUrl} className={`rounded-full transition-all duration-300 ${scrolled ? "w-9 h-9" : "w-12 h-12"}`} />
           <div className="leading-tight">
-            <h1 className={`font-bold transition-all duration-300 ${scrolled ? "text-lg" : "text-2xl"}`}>Lielashop Makeup</h1>
-            <p className="text-sm text-pink-400 transition-all duration-300 opacity-100">
+            <h1 className={`font-bold transition-all duration-300 ${scrolled ? "text-base" : "text-xl"}`}>Lielashop Makeup</h1>
+            <p className="text-xs text-pink-400 transition-all duration-300 opacity-100">
               Belleza y Maquillaje
             </p>
           </div>
@@ -1512,11 +1518,11 @@ const handleFavoriteClick = (product) => {
   className="bg-white rounded-xl shadow cursor-pointer hover:scale-[1.02] transition h-full flex flex-col overflow-hidden"
   >
   <div className="h-40 overflow-hidden">
-  <ImageCarousel images={p.images || []} />
+  <ImageCarousel images={p.images || []} featured />
 </div>
               <div className="p-4">
-                <p className="font-semibold">{p.name}</p>
-                <p className="text-pink-500 font-bold">{p.price}</p>
+                <p className="text-sm font-semibold leading-tight">{p.name}</p>
+                <p className="text-pink-500 text-sm font-bold">{p.price}</p>
                 {p.description && (
                   <p className="text-xs text-gray-500 mt-1">
                     {p.description}
@@ -1596,11 +1602,11 @@ const handleFavoriteClick = (product) => {
             <div
   id={product.anchor}
   key={product.id}
-  className="bg-white rounded-2xl shadow-md hover:shadow-lg transition p-3 scroll-mt-24"
+  className="bg-white rounded-xl shadow-sm hover:shadow-md transition p-2 md:p-3 scroll-mt-24 flex flex-col"
 >
                <ImageCarousel images={product.images} />
-                <div className="p-2">
-                  <p className="font-semibold">{product.name}</p>
+                <div className="p-2 md:p-3 flex flex-col flex-1">
+                  <p className="text-sm font-semibold leading-tight">{product.name}</p>
 
                   {product.description && (
                     <p className="text-xs text-gray-500 mt-1">
@@ -1608,9 +1614,9 @@ const handleFavoriteClick = (product) => {
                     </p>
                   )}
 
-                  <p className="text-pink-500 font-bold">{product.price}</p>
+                  <p className="text-pink-500 text-sm font-bold">{product.price}</p>
 
-                  <div className="flex justify-between items-center mt-3 bg-pink-50 rounded-full px-3 py-2">
+                  <div className="flex justify-between items-center mt-auto bg-pink-50 rounded-full px-3 py-2">
                     <button onClick={() => decreaseQty(product)} className="w-9 h-9 bg-white rounded-full">−</button>
                     <span>{getQty(product.id)}</span>
                     <button onClick={() => addToCart(product)} className="w-9 h-9 bg-pink-500 text-white rounded-full">+</button>
@@ -1642,24 +1648,32 @@ const handleFavoriteClick = (product) => {
           <>
             <button
               onClick={() => setShowSummary(true)}
-              className="bg-pink-500 text-white px-4 py-3 rounded-full"
+              className="bg-pink-500 text-white px-4 py-2 rounded-full"
             >
               🛒 {cart.length}
             </button>
 
             <a
               href={`https://wa.me/573017170457?text=${buildWhatsAppMessage()}`}
-              className="bg-green-500 text-white px-4 py-3 rounded-full"
+              className="bg-green-500 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition"
             >
-              WhatsApp
+              <img
+  src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+  alt="WhatsApp"
+  className="w-7 h-7"
+/>
             </a>
           </>
         ) : (
           <a
             href={`https://wa.me/573017170457?text=${buildWhatsAppMessage()}`}
-            className="bg-green-500 text-white px-4 py-3 rounded-full"
+            className="fixed bottom-4 right-4 z-50 bg-green-500 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-105 transition"
           >
-            WhatsApp
+            <img
+  src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+  alt="WhatsApp"
+  className="w-7 h-7"
+/>
           </a>
         )}
       </div>
