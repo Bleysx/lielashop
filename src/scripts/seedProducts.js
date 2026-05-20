@@ -9,11 +9,13 @@ const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 function format(p) {
+  const firstImage = p.images?.[0];
+
   return {
     name: p.name,
     price: p.price,
     description: p.description || "",
-    image: p.images?.[0] || "",
+    image: firstImage || "",   // fallback seguro
     images: p.images || [],
     category: p.category,
     hasVariants: p.hasVariants || false,

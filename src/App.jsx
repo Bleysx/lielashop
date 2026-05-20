@@ -15,36 +15,37 @@ import Catalog from "./components/Catalog";
 
 import { useCart } from "./hooks/useCart";
 import { useCatalog } from "./hooks/useCatalog";
-
-import { supabase } from "./lib/supabase";
 import { useProducts } from "./hooks/useProducts";
+import { supabase } from "./lib/supabase";
 
-// useEffect(() => {
-//   uploadProducts();
-// }, []);
+import {
+  BrowserRouter,
+  Routes,
+  Route
+} from "react-router-dom";
+
+import AdminPage from "./admin/AdminPage";
 
 export default function LielashopMakeup() {
-const { products } = useProducts();
-useEffect(() => {
-  console.log("SUPABASE TEST INICIADO");
+  // ---------------- PRODUCTS ----------------
+  const { products, loading } = useProducts();
 
-  const test = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("products")
-        .select("*");
+  // 🔴 FIX CRÍTICO: asegurar array válido siempre
+  const safeProducts = products || [];
 
-      console.log("DATA:", data);
-      console.log("ERROR:", error);
-    } catch (err) {
-      console.log("CATCH ERROR:", err);
-    }
-  };
+  // ---------------- CATALOG ----------------
+  const {
+    showCatalog,
+    setShowCatalog,
+    openSection,
+    setOpenSection,
+    selectedVariant,
+    setSelectedVariant,
+    catalogSections,
+    getProductsByCategory
+  } = useCatalog(safeProducts);
 
-  test();
-}, []);
-
-  const logoUrl = "https://i.ibb.co/0p21PF9J/logo.jpg";
+  const catalogRef = useRef(null);
 
   // ---------------- CART ----------------
   const {
@@ -59,22 +60,10 @@ useEffect(() => {
   } = useCart();
 
   // ---------------- STATE ----------------
-  const [featuredIndex] = useState(0);
-
   const [scrolled, setScrolled] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
- const {
- showCatalog,
- setShowCatalog,
- openSection,
- setOpenSection,
- selectedVariant,
- setSelectedVariant,
- catalogSections,
- getProductsByCategory
-} = useCatalog(products);
 
-  const catalogRef = useRef(null);
+  const logoUrl = "https://i.ibb.co/0p21PF9J/logo.jpg";
 
   // ---------------- SCROLL HEADER ----------------
   useEffect(() => {
@@ -87,7 +76,7 @@ useEffect(() => {
   }, []);
 
   // ---------------- DATA ----------------
- const featuredProducts = products?.slice(0, 4) || [];
+  const featuredProducts = safeProducts.slice(0, 4);
 
   // ---------------- ACTIONS ----------------
   const handleFavoriteClick = (product) => {
@@ -103,73 +92,85 @@ useEffect(() => {
   };
 
   // ---------------- RENDER ----------------
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p>Cargando productos...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-pink-50 min-h-screen text-gray-800">
+    <BrowserRouter>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div className="bg-pink-50 min-h-screen text-gray-800">
 
-      {/* HEADER */}
-      <Header logoUrl={logoUrl} scrolled={scrolled} />
+              <Header logoUrl={logoUrl} scrolled={scrolled} />
 
-      {/* HERO */}
-      <Hero
-        setShowCatalog={setShowCatalog}
-        catalogRef={catalogRef}
-      />
+              <Hero
+                setShowCatalog={setShowCatalog}
+                catalogRef={catalogRef}
+              />
 
-      {/* FAVORITOS */}
-      <Favorites
-        featuredProducts={featuredProducts}
-        handleFavoriteClick={handleFavoriteClick}
-        showCatalog={showCatalog}
-        setShowCatalog={setShowCatalog}
-        setOpenSection={setOpenSection}
-        setSelectedVariant={setSelectedVariant}
-        ImageCarousel={ImageCarousel}
-      />
+              <Favorites
+                featuredProducts={featuredProducts}
+                handleFavoriteClick={handleFavoriteClick}
+                showCatalog={showCatalog}
+                setShowCatalog={setShowCatalog}
+                setOpenSection={setOpenSection}
+                setSelectedVariant={setSelectedVariant}
+                ImageCarousel={ImageCarousel}
+              />
 
-      {/* CATÁLOGO */}
-      <Catalog
-        showCatalog={showCatalog}
-        catalogRef={catalogRef}
-        catalogSections={catalogSections}
-        openSection={openSection}
-        setOpenSection={setOpenSection}
-        getProductsByCategory={getProductsByCategory}
-        ImageCarousel={ImageCarousel}
-        selectedVariant={selectedVariant}
-        setSelectedVariant={setSelectedVariant}
-        getQty={getQty}
-        decreaseQty={decreaseQty}
-        addToCart={addToCart}
-      />
+              <Catalog
+                showCatalog={showCatalog}
+                catalogRef={catalogRef}
+                catalogSections={catalogSections}
+                openSection={openSection}
+                setOpenSection={setOpenSection}
+                getProductsByCategory={getProductsByCategory}
+                ImageCarousel={ImageCarousel}
+                selectedVariant={selectedVariant}
+                setSelectedVariant={setSelectedVariant}
+                getQty={getQty}
+                decreaseQty={decreaseQty}
+                addToCart={addToCart}
+              />
 
-      {/* BANNER */}
-      <Banner />
+              <Banner />
 
-      {/* CART BUTTON */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+              <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
+                <CartButton
+                  cart={cart}
+                  setShowSummary={setShowSummary}
+                  buildWhatsAppMessage={buildWhatsAppMessage}
+                />
+              </div>
 
-        <CartButton
-          cart={cart}
-          setShowSummary={setShowSummary}
-          buildWhatsAppMessage={buildWhatsAppMessage}
+              <CartDrawer
+                showSummary={showSummary}
+                setShowSummary={setShowSummary}
+                cart={cart}
+                removeFromCart={removeFromCart}
+                formatTotal={formatTotal}
+                total={total}
+                buildWhatsAppMessage={buildWhatsAppMessage}
+              />
+
+              <Footer />
+
+            </div>
+          }
         />
 
-      </div>
-
-      {/* CART DRAWER */}
-      <CartDrawer
-        showSummary={showSummary}
-        setShowSummary={setShowSummary}
-        cart={cart}
-        removeFromCart={removeFromCart}
-        formatTotal={formatTotal}
-        total={total}
-        buildWhatsAppMessage={buildWhatsAppMessage}
-      />
-
-      <Footer />
-
-    </div>
+        <Route
+          path="/admin"
+          element={<AdminPage />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
-
 }

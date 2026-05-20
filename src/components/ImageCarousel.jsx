@@ -1,17 +1,32 @@
 import { useState, useEffect } from "react";
-import { getCloudinaryUrl } from "../utils/cloudinary";
 
 export default function ImageCarousel({
   images = [],
   featured = false
 }) {
+
   const [index, setIndex] = useState(0);
 
+  // ---------------- CLOUDINARY RESOLVER ----------------
+  const getCloudinaryUrl = (image) => {
+    if (!image) return "";
+
+    // ya es URL completa (secure_url)
+    if (image.startsWith("http")) {
+      return image;
+    }
+
+    // public_id antiguo
+    const cloudName = "dx17lxzey";
+    return `https://res.cloudinary.com/${cloudName}/image/upload/${image}`;
+  };
+
+  // ---------------- PRELOAD ----------------
   useEffect(() => {
     if (!images.length) return;
 
     const img = new Image();
-    img.src = getCloudinaryUrl(images[index]);
+    img.src = getCloudinaryUrl(images[index] || images[0]);
   }, [images, index]);
 
   if (!images.length) return null;
@@ -28,8 +43,9 @@ export default function ImageCarousel({
 
   return (
     <div className="relative">
+
       <img
-        src={getCloudinaryUrl(images[index] || "")}
+        src={getCloudinaryUrl(images[index])}
         loading="lazy"
         decoding="async"
         className={`w-full rounded-xl ${
@@ -56,6 +72,7 @@ export default function ImageCarousel({
           </button>
         </>
       )}
+
     </div>
   );
 }

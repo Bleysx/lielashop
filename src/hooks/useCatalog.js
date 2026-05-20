@@ -48,10 +48,11 @@ export function useCatalog(products = []) {
 
       if (!cat) return [];
 
-      return products.filter(
-        (p) =>
-          p.category === cat
-      );
+     return products.filter(
+  (p) =>
+    p.category === cat &&
+    p.active !== false
+);
     };
 
   return {
