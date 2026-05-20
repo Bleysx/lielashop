@@ -61,13 +61,23 @@ export default function Catalog({
                 {items.length === 0 ? (
                   <p className="text-gray-400">Próximamente productos</p>
                 ) : (
-                  items.slice(0, 30).map((product) => (
+                  items.map((product) => (
                     <div
                       key={product.id}
                       className="bg-white rounded-xl shadow-sm hover:shadow-md transition p-2 md:p-3 flex flex-col"
                     >
                       {/* IMÁGENES */}
-                      <ImageCarousel images={product.images} />
+                      <ImageCarousel
+  images={
+    Array.isArray(product.images)
+      ? product.images
+      : product.images
+      ? [product.images]
+      : product.image
+      ? [product.image]
+      : []
+  }
+/>
 
                       <div className="p-2 flex flex-col flex-1">
                         <p className="text-sm font-semibold leading-tight">
@@ -112,8 +122,11 @@ export default function Catalog({
                         <div className="flex justify-between items-center mt-auto bg-pink-50 rounded-full px-3 py-2">
                           <button
                             onClick={() =>
-                              decreaseQty(product, selectedVariant?.[product.id])
-                            }
+  decreaseQty(
+    product.id,
+    selectedVariant?.[product.id]
+  )
+}
                             className="w-9 h-9 bg-white rounded-full"
                           >
                             −

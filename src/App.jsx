@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import products from "./data/products.optimized.js";
+
 import { getCloudinaryUrl } from "./utils/cloudinary.js";
 
 import ImageCarousel from "./components/ImageCarousel";
@@ -17,9 +17,14 @@ import { useCart } from "./hooks/useCart";
 import { useCatalog } from "./hooks/useCatalog";
 
 import { supabase } from "./lib/supabase";
+import { useProducts } from "./hooks/useProducts";
+
+// useEffect(() => {
+//   uploadProducts();
+// }, []);
 
 export default function LielashopMakeup() {
-
+const { products } = useProducts();
 useEffect(() => {
   console.log("SUPABASE TEST INICIADO");
 
@@ -58,16 +63,16 @@ useEffect(() => {
 
   const [scrolled, setScrolled] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
-  const {
-  showCatalog,
-  setShowCatalog,
-  openSection,
-  setOpenSection,
-  selectedVariant,
-  setSelectedVariant,
-  catalogSections,
-  getProductsByCategory
-} = useCatalog();
+ const {
+ showCatalog,
+ setShowCatalog,
+ openSection,
+ setOpenSection,
+ selectedVariant,
+ setSelectedVariant,
+ catalogSections,
+ getProductsByCategory
+} = useCatalog(products);
 
   const catalogRef = useRef(null);
 
@@ -82,12 +87,7 @@ useEffect(() => {
   }, []);
 
   // ---------------- DATA ----------------
-  const featuredProducts = [
-    products[45],
-    products[113],
-    products[2],
-    products[50]
-  ];
+ const featuredProducts = products?.slice(0, 4) || [];
 
   // ---------------- ACTIONS ----------------
   const handleFavoriteClick = (product) => {
@@ -171,4 +171,5 @@ useEffect(() => {
 
     </div>
   );
+
 }
