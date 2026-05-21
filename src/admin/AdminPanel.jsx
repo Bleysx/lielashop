@@ -33,16 +33,51 @@ export default function AdminPanel() {
 
   // ---------------- LOAD ----------------
   const loadProducts = async () => {
-    const { data, error } = await supabase
-      .from("products")
-      .select("*")
-      .order("created_at", { ascending: false });
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("deleted", false)
+    .order("created_at", { ascending: false });
 
-    if (!error) {
-      setProducts((data || []).map(normalizeProduct));
-    }
-  };
+  if (!error) {
+    setProducts((data || []).map(normalizeProduct));
+  }
+};
+const deleteProduct = async (id) => {
+  const ok = window.confirm("¿Seguro que quieres eliminar este producto?");
+  if (!ok) return;
 
+  console.log("ID A ELIMINAR:", id);
+
+  const { data, error } = await supabase
+    .from("products")
+    .update({ deleted: true })
+    .eq("id", id)
+    .select();
+
+  if (error) {
+    console.error("ERROR SUPABASE DELETE:", error);
+    return;
+  }
+
+  console.log("UPDATE RESULT:", data);
+
+  await loadProducts();
+};
+const toggleActive = async (p) => {
+  const { data, error } = await supabase
+    .from("products")
+    .update({ active: !p.active })
+    .eq("id", p.id)
+    .select();
+
+  if (error) {
+    console.error("ERROR TOGGLE:", error);
+    return;
+  }
+
+  await loadProducts();
+};
   useEffect(() => {
     loadProducts();
   }, []);
@@ -192,7 +227,9 @@ export default function AdminPanel() {
   };
 
   // ---------------- FILTER ----------------
-  const filtered = (products || []).filter(p => {
+  const filtered = (products || [])
+  .filter(p => !p.deleted) // 👈 CLAVE QUE FALTA
+  .filter(p => {
     if (filterStatus === "active") return p.active === true;
     if (filterStatus === "hidden") return p.active === false;
     return true;
@@ -353,19 +390,21 @@ export default function AdminPanel() {
                 Editar
               </button>
 
-              <button
-                onClick={() => supabase.from("products").update({ active: !p.active }).eq("id", p.id)}
-                className="bg-gray-700 text-white px-3 py-1 rounded"
-              >
-                {p.active ? "Ocultar" : "Activar"}
-              </button>
+      
 
-              <button
-                onClick={() => supabase.from("products").delete().eq("id", p.id)}
-                className="bg-red-500 text-white px-3 py-1 rounded"
-              >
-                Eliminar
-              </button>
+             <button
+  onClick={() => toggleActive(p)}
+  className="bg-gray-700 text-white px-3 py-1 rounded"
+>
+  {p.active ? "Ocultar" : "Activar"}
+</button>
+
+<button
+  onClick={() => deleteProduct(p.id)}
+  className="bg-red-500 text-white px-3 py-1 rounded"
+>
+  Eliminar
+</button>
 
             </div>
 
