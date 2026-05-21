@@ -4,6 +4,96 @@ import axios from "axios";
 
 export default function AdminPanel() {
 
+  useEffect(() => {
+  const checkAuth = async () => {
+    const { data, error } = await supabase.auth.getSession();
+
+    if (error || !data.session) {
+      window.location.replace("/login");
+    }
+  };
+
+  checkAuth();
+}, []);
+
+useEffect(() => {
+  const { data: { subscription } } = supabase.auth.onAuthStateChange(
+    (event, session) => {
+      if (event === "SIGNED_OUT" || !session) {
+        window.location.replace("/login");
+      }
+    }
+  );
+
+  return () => subscription.unsubscribe();
+}, []);
+
+useEffect(() => {
+  let timer;
+
+  const logout = async () => {
+  await supabase.auth.signOut();
+
+  const channel = new BroadcastChannel("auth");
+  channel.postMessage("logout");
+  channel.close();
+
+  window.location.replace("/login");
+};
+
+  const resetTimer = () => {
+    if (timer) clearTimeout(timer);
+
+    timer = setTimeout(() => {
+      logout();
+    }, 15 * 60 * 1000); // 15 minutos
+  };
+
+  const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
+
+  events.forEach((event) =>
+    window.addEventListener(event, resetTimer)
+  );
+
+  resetTimer();
+
+  return () => {
+    if (timer) clearTimeout(timer);
+
+    events.forEach((event) =>
+      window.removeEventListener(event, resetTimer)
+    );
+  };
+}, []);
+
+useEffect(() => {
+  const syncLogout = (event) => {
+    if (event.key === "sb-session" && !event.newValue) {
+      window.location.replace("/login");
+    }
+  };
+
+  window.addEventListener("storage", syncLogout);
+
+  return () => {
+    window.removeEventListener("storage", syncLogout);
+  };
+}, []);
+
+useEffect(() => {
+  const channel = new BroadcastChannel("auth");
+
+  channel.onmessage = (event) => {
+    if (event.data === "logout") {
+      window.location.replace("/login");
+    }
+  };
+
+  return () => {
+    channel.close();
+  };
+}, []);
+
   const [products, setProducts] = useState([]);
   const [filterStatus, setFilterStatus] = useState("all");
   const [editing, setEditing] = useState(false);
@@ -21,6 +111,18 @@ export default function AdminPanel() {
     hasVariants: false,
     active: true
   });
+
+  useEffect(() => {
+  const check = async () => {
+    const { data } = await supabase.auth.getUser();
+
+    if (!data?.user) {
+      window.location.replace("/login");
+    }
+  };
+
+  check();
+}, []);
 
   const [variantName, setVariantName] = useState("");
 
