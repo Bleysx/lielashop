@@ -8,7 +8,7 @@ export default function ImageCarousel({
   const [index, setIndex] = useState(0);
 
   // ---------------- CLOUDINARY RESOLVER ----------------
-  const getCloudinaryUrl = (image) => {
+  const getCloudinaryUrl = (image, width = 400) => {
     if (!image) return "";
 
     // ya es URL completa (secure_url)
@@ -18,7 +18,7 @@ export default function ImageCarousel({
 
     // public_id antiguo
     const cloudName = "dx17lxzey";
-    return `https://res.cloudinary.com/${cloudName}/image/upload/${image}`;
+    return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto,w_${width}/${image}`;
   };
 
   // ---------------- PRELOAD ----------------
@@ -26,7 +26,7 @@ export default function ImageCarousel({
     if (!images.length) return;
 
     const img = new Image();
-    img.src = getCloudinaryUrl(images[index] || images[0]);
+    img.src = getCloudinaryUrl(images[index] || images[0], 400);
   }, [images, index]);
 
   if (!images.length) return null;
@@ -45,9 +45,10 @@ export default function ImageCarousel({
     <div className="relative">
 
       <img
-        src={getCloudinaryUrl(images[index])}
+        src={getCloudinaryUrl(images[index], 400)}
         loading="lazy"
         decoding="async"
+          style={{ objectFit: "cover" }}
         className={`w-full rounded-xl ${
           featured
             ? "h-48 object-cover bg-white"

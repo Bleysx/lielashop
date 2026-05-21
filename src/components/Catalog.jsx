@@ -95,26 +95,26 @@ export default function Catalog({
                         </p>
 
                         {/* VARIANTES */}
-                        {product.hasVariants && (
+                       {product.variants?.length > 0 && (
                           <select
                             className="w-full text-xs mt-2 border rounded-md p-1"
-                            value={selectedVariant?.[product.id] || ""}
-                            onChange={(e) =>
-                              setSelectedVariant({
-                                ...selectedVariant,
-                                [product.id]: Number(e.target.value),
-                              })
-                            }
+                          value={selectedVariant?.[product.id] || ""}
+onChange={(e) =>
+  setSelectedVariant({
+    ...selectedVariant,
+    [product.id]: e.target.value,
+  })
+}
                           >
                             <option value="">
                               Seleccionar tono o color
                             </option>
 
-                            {product.variants.map((v) => (
-                              <option key={v.id} value={v.id}>
-                                {v.name}
-                              </option>
-                            ))}
+                            {product.variants.map((v, i) => (
+  <option key={i} value={v.name}>
+    {v.name}
+  </option>
+))}
                           </select>
                         )}
 

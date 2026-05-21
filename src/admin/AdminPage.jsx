@@ -1,70 +1,35 @@
 import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase";
+import LoginAdmin from "./LoginAdmin";
+import AdminLayout from "./AdminLayout";
 
-import { supabase }
-from "../lib/supabase";
+export default function AdminPage() {
 
-import LoginAdmin
-from "./LoginAdmin";
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-import AdminPanel
-from "./AdminPanel";
+  useEffect(() => {
 
-export default function AdminPage(){
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data?.user || null);
+      setLoading(false);
+    };
 
-const [user,setUser]=
-useState(null);
+    getUser();
 
-useEffect(()=>{
+    const { data: listener } =
+      supabase.auth.onAuthStateChange((_, session) => {
+        setUser(session?.user || null);
+      });
 
-supabase.auth
-.getUser()
+    return () => listener.subscription.unsubscribe();
 
-.then(({data})=>{
+  }, []);
 
-setUser(
-data?.user || null
-);
+  if (loading) return <div>Cargando...</div>;
 
-});
+  if (!user) return <LoginAdmin onLogin={setUser} />;
 
-const {
-data:listener
-}=supabase.auth
-.onAuthStateChange(
-(_,session)=>{
-
-setUser(
-session?.user || null
-);
-
-}
-);
-
-return ()=>{
-
-listener.subscription
-.unsubscribe();
-
-};
-
-},[]);
-
-if(!user){
-
-return(
-
-<LoginAdmin
-onLogin={setUser}
-/>
-
-);
-
-}
-
-return(
-
-<AdminPanel/>
-
-);
-
+  return <AdminLayout user={user} />;
 }

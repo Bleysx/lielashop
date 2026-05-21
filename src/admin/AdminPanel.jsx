@@ -5,11 +5,9 @@ import axios from "axios";
 export default function AdminPanel() {
 
   const [products, setProducts] = useState([]);
-
-  // ---------------- FILTER STATUS (NEW) ----------------
   const [filterStatus, setFilterStatus] = useState("all");
+  const [editing, setEditing] = useState(false);
 
-  // ---------------- FORM ----------------
   const [form, setForm] = useState({
     id: null,
     name: "",
@@ -24,9 +22,14 @@ export default function AdminPanel() {
     active: true
   });
 
-  // ---------------- VARIANTS TEMP ----------------
   const [variantName, setVariantName] = useState("");
-  const [variantStock, setVariantStock] = useState(0);
+
+  // ---------------- NORMALIZE ----------------
+  const normalizeProduct = (p) => ({
+    ...p,
+    images: Array.isArray(p.images) ? p.images : [],
+    variants: Array.isArray(p.variants) ? p.variants : []
+  });
 
   // ---------------- LOAD ----------------
   const loadProducts = async () => {
@@ -35,22 +38,32 @@ export default function AdminPanel() {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error) {
-      console.log(error);
-      return;
+    if (!error) {
+      setProducts((data || []).map(normalizeProduct));
     }
-
-    setProducts(data || []);
   };
 
   useEffect(() => {
     loadProducts();
   }, []);
 
+  // ---------------- REALTIME ----------------
+  useEffect(() => {
+    const channel = supabase
+      .channel("products-realtime")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "products" },
+        () => loadProducts()
+      )
+      .subscribe();
+
+    return () => supabase.removeChannel(channel);
+  }, []);
+
   // ---------------- CLOUDINARY ----------------
   const uploadImage = async (file) => {
     const formData = new FormData();
-
     formData.append("file", file);
     formData.append("upload_preset", "lielashop");
 
@@ -62,25 +75,26 @@ export default function AdminPanel() {
     return res.data.secure_url;
   };
 
-  // ---------------- ADD IMAGE ----------------
   const handleAddImage = async (file) => {
+    if (!file) return;
+
     const url = await uploadImage(file);
 
-    setForm((prev) => ({
+    setForm(prev => ({
       ...prev,
-      image: prev.image || url,
-      images: [...(prev.images || []), url]
+      images: [...(prev.images || []), url],
+      image: prev.image || url
     }));
   };
 
-  // ---------------- REMOVE IMAGE (NEW) ----------------
-  const removeImage = (index) => {
-    const updated = [...form.images];
-    updated.splice(index, 1);
-    setForm({ ...form, images: updated });
+  const removeImage = (i) => {
+    setForm(prev => ({
+      ...prev,
+      images: (prev.images || []).filter((_, index) => index !== i)
+    }));
   };
 
-  // ---------------- SAVE ----------------
+  // ---------------- SAVE (FIX FINAL VARIANTS BUG) ----------------
   const saveProduct = async () => {
 
     const payload = {
@@ -88,25 +102,50 @@ export default function AdminPanel() {
       price: form.price,
       description: form.description,
       category: form.category,
-      image: form.images[0] || form.image,
-      images: form.images,
+      image: form.images?.length ? form.images[0] : form.image,
+
+      images: Array.isArray(form.images) ? form.images : [],
+
+      // 🔥 FIX REAL: NO fallback a existing, permite borrar correctamente
+      variants: Array.isArray(form.variants) ? form.variants : [],
+
       stock: form.stock,
-      variants: form.variants,
       hasVariants: form.hasVariants,
       active: form.active
     };
 
-    if (form.id) {
-      await supabase
-        .from("products")
-        .update(payload)
-        .eq("id", form.id);
-    } else {
-      await supabase
-        .from("products")
-        .insert([payload]);
-    }
+    const { error } = form.id
+      ? await supabase.from("products").update(payload).eq("id", form.id)
+      : await supabase.from("products").insert([payload]);
 
+    if (error) return;
+
+    resetForm();
+    setEditing(false);
+  };
+
+  // ---------------- EDIT ----------------
+  const editProduct = (p) => {
+    const safe = normalizeProduct(p);
+
+    setForm({
+      id: safe.id,
+      name: safe.name || "",
+      price: safe.price || "",
+      description: safe.description || "",
+      category: safe.category || "",
+      image: safe.image || "",
+      images: safe.images,
+      stock: safe.stock || 0,
+      variants: safe.variants,
+      hasVariants: safe.hasVariants || false,
+      active: safe.active ?? true
+    });
+
+    setEditing(true);
+  };
+
+  const resetForm = () => {
     setForm({
       id: null,
       name: "",
@@ -122,144 +161,140 @@ export default function AdminPanel() {
     });
 
     setVariantName("");
-    setVariantStock(0);
-
-    loadProducts();
   };
 
-  // ---------------- EDIT ----------------
-  const editProduct = (product) => {
-    setForm(product);
+  const cancelEdit = () => {
+    resetForm();
+    setEditing(false);
   };
 
-  // ---------------- DELETE ----------------
-  const deleteProduct = async (id) => {
-    await supabase
-      .from("products")
-      .delete()
-      .eq("id", id);
-
-    loadProducts();
-  };
-
-  // ---------------- ADD VARIANT ----------------
+  // ---------------- VARIANTS FIX ----------------
   const addVariant = () => {
-    setForm({
-      ...form,
+    if (!variantName.trim()) return;
+
+    setForm(prev => ({
+      ...prev,
       variants: [
-        ...form.variants,
-        { name: variantName, stock: variantStock }
-      ],
-      hasVariants: true
-    });
+        ...(Array.isArray(prev.variants) ? prev.variants : []),
+        { name: variantName.trim() }
+      ]
+    }));
 
     setVariantName("");
-    setVariantStock(0);
   };
 
-  // ---------------- TOGGLE ACTIVE ----------------
-  const toggleActive = async (product) => {
-    await supabase
-      .from("products")
-      .update({ active: !product.active })
-      .eq("id", product.id);
-
-    loadProducts();
+  const removeVariant = (index) => {
+    setForm(prev => ({
+      ...prev,
+      variants: (Array.isArray(prev.variants) ? prev.variants : [])
+        .filter((_, i) => i !== index)
+    }));
   };
+
+  // ---------------- FILTER ----------------
+  const filtered = (products || []).filter(p => {
+    if (filterStatus === "active") return p.active === true;
+    if (filterStatus === "hidden") return p.active === false;
+    return true;
+  });
 
   return (
     <div className="p-6">
 
-      <h1 className="text-3xl font-bold mb-6">
-        Panel Admin
-      </h1>
+      <h1 className="text-2xl font-bold mb-4">Panel Admin</h1>
 
-      {/* ---------------- FORM ---------------- */}
+      {editing && (
+        <div className="mb-4 flex gap-2 items-center">
+          <span className="text-blue-600 text-sm">Editando producto</span>
+
+          <button
+            onClick={cancelEdit}
+            className="bg-red-500 text-white px-3 py-1 rounded"
+          >
+            Terminar edición
+          </button>
+        </div>
+      )}
+
+      {/* FILTERS */}
+      <div className="flex gap-2 mb-4">
+
+        <button onClick={() => setFilterStatus("all")}
+          className={`px-3 py-1 border rounded ${filterStatus === "all" ? "bg-black text-white" : ""}`}>
+          Todos
+        </button>
+
+        <button onClick={() => setFilterStatus("active")}
+          className={`px-3 py-1 border rounded ${filterStatus === "active" ? "bg-black text-white" : ""}`}>
+          Activos
+        </button>
+
+        <button onClick={() => setFilterStatus("hidden")}
+          className={`px-3 py-1 border rounded ${filterStatus === "hidden" ? "bg-black text-white" : ""}`}>
+          Ocultos
+        </button>
+
+      </div>
+
+      {/* FORM */}
       <div className="border p-4 rounded-xl space-y-3">
 
         <input
+          className="border p-2 w-full"
           placeholder="Nombre"
           value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
-          className="border p-2 w-full"
+          onChange={e => setForm({ ...form, name: e.target.value })}
         />
 
         <input
+          className="border p-2 w-full"
           placeholder="Precio"
           value={form.price}
-          onChange={(e) => setForm({ ...form, price: e.target.value })}
-          className="border p-2 w-full"
+          onChange={e => setForm({ ...form, price: e.target.value })}
         />
 
         <input
+          className="border p-2 w-full"
           placeholder="Categoría"
           value={form.category}
-          onChange={(e) => setForm({ ...form, category: e.target.value })}
-          className="border p-2 w-full"
+          onChange={e => setForm({ ...form, category: e.target.value })}
         />
 
-        {/* ---------------- IMAGE UPLOAD ---------------- */}
         <label className="bg-black text-white px-4 py-2 rounded cursor-pointer inline-block">
           Subir imagen
           <input
             type="file"
-            accept="image/*"
             hidden
-            onChange={(e) => {
-              const file = e.target.files[0];
-              if (file) handleAddImage(file);
-            }}
+            onChange={e => handleAddImage(e.target.files[0])}
           />
         </label>
 
-        {/* ---------------- IMAGE PREVIEW + DELETE ---------------- */}
-        <div className="flex gap-2 flex-wrap mt-2">
+        <div className="flex gap-2 flex-wrap">
           {form.images.map((img, i) => (
             <div key={i} className="relative">
               <img src={img} className="w-16 h-16 object-cover border" />
-
               <button
                 onClick={() => removeImage(i)}
                 className="absolute top-0 right-0 bg-red-500 text-white text-xs px-1"
               >
-                X
+                ×
               </button>
             </div>
           ))}
         </div>
 
-        <input
-          placeholder="Stock"
-          type="number"
-          value={form.stock}
-          onChange={(e) => setForm({ ...form, stock: Number(e.target.value) })}
-          className="border p-2 w-full"
-        />
-
-        <textarea
-          placeholder="Descripción"
-          value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
-          className="border p-2 w-full"
-        />
-
-        {/* ---------------- VARIANTS ---------------- */}
+        {/* VARIANTS */}
         <div className="border p-3">
-          <h3 className="font-bold mb-2">Variantes (tonos)</h3>
+
+          <div className="text-sm mb-2">
+            Variantes agregadas: {form.variants.length}
+          </div>
 
           <input
-            placeholder="Nombre tono"
+            className="border p-2 w-full mb-2"
+            placeholder="Nombre variante"
             value={variantName}
-            onChange={(e) => setVariantName(e.target.value)}
-            className="border p-2 w-full mb-2"
-          />
-
-          <input
-            placeholder="Stock"
-            type="number"
-            value={variantStock}
-            onChange={(e) => setVariantStock(Number(e.target.value))}
-            className="border p-2 w-full mb-2"
+            onChange={e => setVariantName(e.target.value)}
           />
 
           <button
@@ -269,109 +304,73 @@ export default function AdminPanel() {
             Agregar variante
           </button>
 
-          <div className="mt-2">
+          <div className="mt-3 space-y-2">
             {form.variants.map((v, i) => (
-              <div key={i}>
-                {v.name} - stock: {v.stock}
+              <div key={i} className="flex justify-between items-center border p-2 rounded">
+                <span>{v.name}</span>
+
+                <button
+                  onClick={() => removeVariant(i)}
+                  className="bg-red-500 text-white px-2 py-1 rounded text-xs"
+                >
+                  Eliminar
+                </button>
               </div>
             ))}
           </div>
-        </div>
 
-        {/* ---------------- ACTIVE ---------------- */}
-        <label className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            checked={form.active}
-            onChange={(e) => setForm({ ...form, active: e.target.checked })}
-          />
-          Activo
-        </label>
+        </div>
 
         <button
           onClick={saveProduct}
-          className="bg-black text-white px-4 py-2 rounded"
+          className="bg-black text-white w-full py-2 rounded"
         >
           {form.id ? "Actualizar" : "Crear"}
         </button>
 
       </div>
 
-      {/* ---------------- FILTERS (NEW) ---------------- */}
-      <div className="flex gap-2 mt-6 mb-4">
-
-        <button
-          onClick={() => setFilterStatus("all")}
-          className={`px-3 py-1 border rounded ${filterStatus === "all" ? "bg-black text-white" : ""}`}
-        >
-          Todos
-        </button>
-
-        <button
-          onClick={() => setFilterStatus("active")}
-          className={`px-3 py-1 border rounded ${filterStatus === "active" ? "bg-black text-white" : ""}`}
-        >
-          Activos
-        </button>
-
-        <button
-          onClick={() => setFilterStatus("hidden")}
-          className={`px-3 py-1 border rounded ${filterStatus === "hidden" ? "bg-black text-white" : ""}`}
-        >
-          Ocultos
-        </button>
-
-      </div>
-
-      {/* ---------------- LIST ---------------- */}
+      {/* LIST */}
       <div className="grid gap-4 mt-6">
 
-        {products
-          .filter((p) => {
-            if (filterStatus === "active") return p.active !== false;
-            if (filterStatus === "hidden") return p.active === false;
-            return true;
-          })
-          .map((p) => (
+        {filtered.map(p => (
+          <div key={p.id} className="border p-4 rounded-xl">
 
-            <div key={p.id} className="border p-4 rounded-xl">
+            <h2 className="font-bold">{p.name}</h2>
+            <p>{p.price}</p>
+            <p>{p.category}</p>
 
-              <h2 className="font-bold">{p.name}</h2>
-              <p>{p.price}</p>
-              <p>{p.category}</p>
+            <span className={p.active ? "text-green-600" : "text-red-500"}>
+              {p.active ? "Activo" : "Oculto"}
+            </span>
 
-              {!p.active && (
-                <span className="text-red-500">Oculto</span>
-              )}
+            <div className="flex gap-2 mt-3">
 
               <button
-                onClick={() => toggleActive(p)}
-                className="bg-gray-700 text-white px-3 py-1 rounded mt-2"
+                onClick={() => editProduct(p)}
+                className="bg-blue-500 text-white px-3 py-1 rounded"
+              >
+                Editar
+              </button>
+
+              <button
+                onClick={() => supabase.from("products").update({ active: !p.active }).eq("id", p.id)}
+                className="bg-gray-700 text-white px-3 py-1 rounded"
               >
                 {p.active ? "Ocultar" : "Activar"}
               </button>
 
-              <div className="flex gap-2 mt-2">
-
-                <button
-                  onClick={() => editProduct(p)}
-                  className="bg-blue-500 text-white px-3 py-1 rounded"
-                >
-                  Editar
-                </button>
-
-                <button
-                  onClick={() => deleteProduct(p.id)}
-                  className="bg-red-500 text-white px-3 py-1 rounded"
-                >
-                  Eliminar
-                </button>
-
-              </div>
+              <button
+                onClick={() => supabase.from("products").delete().eq("id", p.id)}
+                className="bg-red-500 text-white px-3 py-1 rounded"
+              >
+                Eliminar
+              </button>
 
             </div>
 
-          ))}
+          </div>
+        ))}
 
       </div>
 

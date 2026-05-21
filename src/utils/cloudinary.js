@@ -1,4 +1,16 @@
 const CLOUD_NAME = "dx17lxzey";
-export function getCloudinaryUrl(publicId) {
-  return `https://res.cloudinary.com/dx17lxzey/image/upload/f_auto,q_auto,w_600/${publicId}`;
+
+export function getCloudinaryUrl(input, width = 600) {
+  if (!input) return "";
+
+  // Caso 1: ya es URL completa
+  if (input.includes("res.cloudinary.com")) {
+    return input.replace(
+      "/upload/",
+      `/upload/f_auto,q_auto,w_${width}/`
+    );
+  }
+
+  // Caso 2: es public_id
+  return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/f_auto,q_auto,w_${width}/${input}`;
 }
