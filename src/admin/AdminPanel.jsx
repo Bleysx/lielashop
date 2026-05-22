@@ -94,7 +94,21 @@ useEffect(() => {
   };
 }, []);
 
-  const [products, setProducts] = useState([]);
+const CATEGORIES = [
+  "labios",
+  "cuidado_facial",
+  "cejas_pestanas",
+  "rubor",
+  "sombras",
+  "bases_corrector",
+  "polvos",
+  "cabello"
+];
+
+const [search, setSearch] = useState("");
+const [filterCategory, setFilterCategory] = useState("all");
+const [viewMode, setViewMode] = useState("cards"); // "cards" | "table" 
+const [products, setProducts] = useState([]);
   const [filterStatus, setFilterStatus] = useState("all");
   const [editing, setEditing] = useState(false);
 
@@ -231,12 +245,12 @@ const toggleActive = async (p) => {
     }));
   };
 
-  // ---------------- SAVE (FIX FINAL VARIANTS BUG) ----------------
+  // ----------- SAVE (FIX FINAL VARIANTS BUG) ------------
   const saveProduct = async () => {
 
     const payload = {
       name: form.name,
-      price: form.price,
+      price: Number(form.price),
       description: form.description,
       category: form.category,
       image: form.images?.length ? form.images[0] : form.image,
@@ -329,13 +343,26 @@ const toggleActive = async (p) => {
   };
 
   // ---------------- FILTER ----------------
-  const filtered = (products || [])
-  .filter(p => !p.deleted) // 👈 CLAVE QUE FALTA
+const filtered = (products || [])
+  .filter(p => !p.deleted)
+
+  // estado activo/oculto
   .filter(p => {
     if (filterStatus === "active") return p.active === true;
     if (filterStatus === "hidden") return p.active === false;
     return true;
-  });
+  })
+
+  // categoría
+  .filter(p => {
+    if (filterCategory === "all") return true;
+    return p.category === filterCategory;
+  })
+
+  // 🔍 BUSCADOR (ESTO ES LO QUE SE ROMPIÓ)
+  .filter(p =>
+    p.name?.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="p-6">
@@ -354,6 +381,33 @@ const toggleActive = async (p) => {
           </button>
         </div>
       )}
+
+<div className="flex gap-2 mb-4 flex-wrap">
+
+  {/* SEARCH */}
+  <input
+    className="border p-2 rounded w-64"
+    placeholder="Buscar producto..."
+    value={search}
+    onChange={(e) => setSearch(e.target.value)}
+  />
+
+  {/* CATEGORY FILTER */}
+  <select
+  value={filterCategory}
+  onChange={(e) => setFilterCategory(e.target.value)}
+  className="border p-2 rounded mb-4 ml-2"
+>
+  <option value="all">Todas las categorías</option>
+
+  {CATEGORIES.map((cat) => (
+    <option key={cat} value={cat}>
+      {cat}
+    </option>
+  ))}
+</select>
+
+</div>
 
       {/* FILTERS */}
       <div className="flex gap-2 mb-4">
@@ -386,18 +440,30 @@ const toggleActive = async (p) => {
         />
 
         <input
-          className="border p-2 w-full"
-          placeholder="Precio"
-          value={form.price}
-          onChange={e => setForm({ ...form, price: e.target.value })}
-        />
+  className="border p-2 w-full"
+  placeholder="Precio (solo números)"
+  value={form.price}
+  onChange={e => {
+    const value = e.target.value.replace(/\D/g, "");
+    setForm({ ...form, price: value });
+  }}
+/>
 
-        <input
-          className="border p-2 w-full"
-          placeholder="Categoría"
-          value={form.category}
-          onChange={e => setForm({ ...form, category: e.target.value })}
-        />
+<select
+  className="border p-2 w-full"
+  value={form.category}
+  onChange={(e) =>
+    setForm({ ...form, category: e.target.value })
+  }
+>
+  <option value="">Selecciona categoría</option>
+
+  {CATEGORIES.map((cat) => (
+    <option key={cat} value={cat}>
+      {cat}
+    </option>
+  ))}
+</select>
 
         <label className="bg-black text-white px-4 py-2 rounded cursor-pointer inline-block">
           Subir imagen
@@ -469,52 +535,134 @@ const toggleActive = async (p) => {
 
       </div>
 
-      {/* LIST */}
-      <div className="grid gap-4 mt-6">
+<div className="flex gap-2 mt-4 mb-2">
+  <button
+    onClick={() => setViewMode("cards")}
+    className={`px-3 py-1 border rounded ${
+      viewMode === "cards" ? "bg-black text-white" : ""
+    }`}
+  >
+    Cards
+  </button>
 
-        {filtered.map(p => (
-          <div key={p.id} className="border p-4 rounded-xl">
+  <button
+    onClick={() => setViewMode("table")}
+    className={`px-3 py-1 border rounded ${
+      viewMode === "table" ? "bg-black text-white" : ""
+    }`}
+  >
+    Tabla
+  </button>
+</div>
 
-            <h2 className="font-bold">{p.name}</h2>
-            <p>{p.price}</p>
-            <p>{p.category}</p>
+  {/* LIST */}
+<div className="mt-6">
 
-            <span className={p.active ? "text-green-600" : "text-red-500"}>
-              {p.active ? "Activo" : "Oculto"}
-            </span>
+  {viewMode === "cards" && (
+    <div className="grid gap-4 mt-6">
+      {filtered.map(p => (
+        <div key={p.id} className="border p-4 rounded-xl">
 
-            <div className="flex gap-2 mt-3">
+          <h2 className="font-bold">{p.name}</h2>
+          <p>
+  {"$ " + Number(p.price).toLocaleString("en-US")}
+</p>
+          <p>{p.category}</p>
 
-              <button
-                onClick={() => editProduct(p)}
-                className="bg-blue-500 text-white px-3 py-1 rounded"
-              >
-                Editar
-              </button>
+          <span className={p.active ? "text-green-600" : "text-red-500"}>
+            {p.active ? "Activo" : "Oculto"}
+          </span>
 
-      
+          <div className="flex gap-2 mt-3">
+            <button
+              onClick={() => editProduct(p)}
+              className="bg-blue-500 text-white px-3 py-1 rounded"
+            >
+              Editar
+            </button>
 
-             <button
-  onClick={() => toggleActive(p)}
-  className="bg-gray-700 text-white px-3 py-1 rounded"
->
-  {p.active ? "Ocultar" : "Activar"}
-</button>
+            <button
+              onClick={() => toggleActive(p)}
+              className="bg-gray-700 text-white px-3 py-1 rounded"
+            >
+              {p.active ? "Ocultar" : "Activar"}
+            </button>
 
-<button
-  onClick={() => deleteProduct(p.id)}
-  className="bg-red-500 text-white px-3 py-1 rounded"
->
-  Eliminar
-</button>
-
-            </div>
-
+            <button
+              onClick={() => deleteProduct(p.id)}
+              className="bg-red-500 text-white px-3 py-1 rounded"
+            >
+              Eliminar
+            </button>
           </div>
-        ))}
 
-      </div>
+        </div>
+      ))}
+    </div>
+  )}
 
+  {viewMode === "table" && (
+    <div className="overflow-x-auto border rounded-xl mt-4">
+      <table className="w-full text-sm">
+
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="p-2 text-left">Nombre</th>
+            <th className="p-2 text-left">Precio</th>
+            <th className="p-2 text-left">Categoría</th>
+            <th className="p-2 text-left">Estado</th>
+            <th className="p-2 text-left">Acciones</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {filtered.map(p => (
+            <tr key={p.id} className="border-t">
+
+              <td className="p-2">{p.name}</td>
+              <td className="p-2">{p.price}</td>
+              <td className="p-2">{p.category}</td>
+
+              <td className="p-2">
+                <span className={p.active ? "text-green-600" : "text-red-500"}>
+                  {p.active ? "Activo" : "Oculto"}
+                </span>
+              </td>
+
+              <td className="p-2 flex gap-2">
+
+                <button
+                  onClick={() => editProduct(p)}
+                  className="bg-blue-500 text-white px-2 py-1 rounded text-xs"
+                >
+                  Editar
+                </button>
+
+                <button
+                  onClick={() => toggleActive(p)}
+                  className="bg-gray-700 text-white px-2 py-1 rounded text-xs"
+                >
+                  {p.active ? "Ocultar" : "Activar"}
+                </button>
+
+                <button
+                  onClick={() => deleteProduct(p.id)}
+                  className="bg-red-500 text-white px-2 py-1 rounded text-xs"
+                >
+                  Eliminar
+                </button>
+
+              </td>
+
+            </tr>
+          ))}
+        </tbody>
+
+      </table>
+    </div>
+  )}
+
+</div>
     </div>
   );
 }

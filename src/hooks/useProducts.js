@@ -11,7 +11,9 @@ export function useProducts() {
 
     const { data, error, count } = await supabase
   .from("products")
-  .select("*", { count: "exact" });
+  .select("*", { count: "exact" })
+    .eq("deleted", false)
+  .eq("active", true);
 
 console.log("TOTAL DB:", count);
 console.log("PRODUCTOS:", data);

@@ -46,10 +46,8 @@ export default function Favorites({
               </p>
 
               <p className="text-pink-500 text-sm font-bold">
-
-                {p.price}
-
-              </p>
+  {"$ " + Number(p.price).toLocaleString("en-US")}
+</p>
 
               {p.description && (
 

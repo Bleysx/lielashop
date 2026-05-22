@@ -90,10 +90,10 @@ export default function Catalog({
                           </p>
                         )}
 
-                        <p className="text-pink-500 text-sm font-bold mt-1">
-                          {product.price}
-                        </p>
-
+                     <p className="text-pink-500 text-sm font-bold mt-1">
+  {"$ " + Number(String(product.price).replace(/\D/g, "")).toLocaleString("en-US")}
+</p>
+                      
                         {/* VARIANTES */}
                        {product.variants?.length > 0 && (
                           <select
