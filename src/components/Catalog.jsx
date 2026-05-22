@@ -5,6 +5,8 @@ export default function Catalog({
   openSection,
   setOpenSection,
   getProductsByCategory,
+  search,
+  setSearch,
   ImageCarousel,
   selectedVariant,
   setSelectedVariant,
@@ -13,14 +15,159 @@ export default function Catalog({
   addToCart
 }) {
   if (!showCatalog) return null;
+  const hasResults =
+catalogSections.some((section) => {
+
+const items =
+getProductsByCategory(section.key);
+
+return items.some((product) => {
+
+const text = [
+product.name,
+product.description,
+product.category
+]
+.join(" ")
+.toLowerCase();
+
+return text.includes(
+search.toLowerCase()
+);
+
+});
+
+});
 
   return (
     <section ref={catalogRef} className="existing-classes py-10 px-4">
+     
+     <div className="mb-6">
 
-      {catalogSections.map((section) => {
-        const isOpen = openSection === section.key;
-        const items = getProductsByCategory(section.key);
+  <div className="relative">
 
+    <input
+      type="text"
+      placeholder="Buscar..."
+      value={search}
+      onChange={(e) =>
+        setSearch(e.target.value)
+      }
+      className="
+        w-full
+        pl-11
+        pr-4
+        py-3
+        rounded-2xl
+        border
+        border-pink-200
+        bg-white/95
+        backdrop-blur-sm
+        shadow-sm
+        focus:outline-none
+        focus:ring-2
+        focus:ring-pink-300
+        focus:border-pink-300
+        text-sm
+      "
+    />
+
+    <span
+      className="
+        absolute
+        left-4
+        top-1/2
+        -translate-y-1/2
+        text-gray-400
+      "
+    >
+      🔍
+    </span>
+
+  </div>
+
+</div>
+{
+search.trim()
+&&
+!hasResults
+&& (
+
+<div
+className="
+text-center
+py-10
+text-gray-500
+"
+>
+
+<p className="text-lg">
+
+🔍 No encontramos productos
+
+</p>
+
+<p className="text-sm mt-2">
+
+Prueba otra palabra.
+
+</p>
+
+</div>
+
+)
+}
+     {catalogSections
+.filter((section) => {
+
+if (!search?.trim())
+return true;
+
+const items =
+getProductsByCategory(section.key);
+
+return items.some((product) => {
+
+const text = [
+product.name,
+product.description,
+product.category
+]
+.join(" ")
+.toLowerCase();
+
+return text.includes(
+search.toLowerCase()
+);
+
+});
+
+})
+.map((section) => {
+        const isSearching = search?.trim();
+
+const isOpen =
+  isSearching ||
+  openSection === section.key;
+      const items = getProductsByCategory(section.key)
+.filter((product) => {
+
+if (!search?.trim())
+return true;
+
+const text = [
+product.name,
+product.description,
+product.category
+]
+.join(" ")
+.toLowerCase();
+
+return text.includes(
+search.toLowerCase()
+);
+
+});
         return (
           <div
             id={`section-${section.key}`}

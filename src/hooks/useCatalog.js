@@ -12,6 +12,9 @@ export function useCatalog(products = []) {
   const [selectedVariant, setSelectedVariant] =
     useState({});
 
+  const [search, setSearch] =
+  useState("");
+
   // ---------------- DATA ----------------
   const catalogSections = [
     { title: "Labios", key: "labios" },
@@ -69,6 +72,9 @@ export function useCatalog(products = []) {
 
     selectedVariant,
     setSelectedVariant,
+
+    search,
+    setSearch,
 
     catalogSections,
 

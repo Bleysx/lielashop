@@ -41,6 +41,8 @@ export default function LielashopMakeup() {
     setOpenSection,
     selectedVariant,
     setSelectedVariant,
+    search,
+    setSearch,
     catalogSections,
     getProductsByCategory
   } = useCatalog(safeProducts);
@@ -131,6 +133,10 @@ export default function LielashopMakeup() {
                 catalogSections={catalogSections}
                 openSection={openSection}
                 setOpenSection={setOpenSection}
+
+                search={search}
+                setSearch={setSearch}
+                
                 getProductsByCategory={getProductsByCategory}
                 ImageCarousel={ImageCarousel}
                 selectedVariant={selectedVariant}
