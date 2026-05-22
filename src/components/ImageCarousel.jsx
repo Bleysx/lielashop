@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-
+import { getCloudinaryUrl } from "../utils/cloudinary";
 export default function ImageCarousel({
   images = [],
   featured = false
@@ -8,18 +8,7 @@ export default function ImageCarousel({
   const [index, setIndex] = useState(0);
 
   // ---------------- CLOUDINARY RESOLVER ----------------
-  const getCloudinaryUrl = (image, width = 400) => {
-    if (!image) return "";
-
-    // ya es URL completa (secure_url)
-    if (image.startsWith("http")) {
-      return image;
-    }
-
-    // public_id antiguo
-    const cloudName = "dx17lxzey";
-    return `https://res.cloudinary.com/${cloudName}/image/upload/f_auto,q_auto,w_${width}/${image}`;
-  };
+ 
 
   // ---------------- PRELOAD ----------------
   useEffect(() => {
