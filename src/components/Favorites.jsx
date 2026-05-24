@@ -12,9 +12,15 @@ export default function Favorites({
 
     <section className="p-6">
 
-      <h2 className="text-2xl font-bold text-pink-600 mb-4">
-        Favoritos
-      </h2>
+     <div className="mb-4">
+
+  <h2 className="text-lg md:text-2xl font-bold text-pink-600 mb-4">
+   🩷 Favoritos de nuestras clientes
+  </h2>
+
+  <div className="w-12 h-1 bg-pink-500 mt-2 rounded-full"></div>
+
+</div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
 
@@ -25,10 +31,18 @@ export default function Favorites({
             onClick={() =>
               handleFavoriteClick(p)
             }
-            className="bg-white rounded-xl shadow cursor-pointer hover:scale-[1.02] transition h-full flex flex-col overflow-hidden"
+            className="relative bg-white rounded-2xl shadow cursor-pointer hover:scale-[1.02] transition h-full flex flex-col overflow-hidden"
           >
+<div className="absolute top-2 right-2 z-10">
 
-            <div className="h-40 overflow-hidden">
+  <div className="bg-white/90 rounded-full p-1 shadow-sm hover:shadow-md">
+
+    🩷
+
+  </div>
+
+</div>
+           <div className="h-38 overflow-hidden">
 
               <ImageCarousel
                 images={p.images || []}
@@ -37,7 +51,7 @@ export default function Favorites({
 
             </div>
 
-            <div className="p-4">
+            <div className="px-3 pt-3 pb-4">
 
               <p className="text-sm font-semibold leading-tight">
 
@@ -49,16 +63,6 @@ export default function Favorites({
   {"$ " + Number(p.price).toLocaleString("en-US")}
 </p>
 
-              {p.description && (
-
-                <p className="text-xs text-gray-500 mt-1">
-
-                  {p.description}
-
-                </p>
-
-              )}
-
             </div>
 
           </div>
@@ -67,37 +71,15 @@ export default function Favorites({
 
       </div>
 
-      <div className="flex justify-center mt-4">
+<div className="mt-8 mb-1">
 
-        <button
-          onClick={() => {
+  <h2 className="text-lg md:text-2xl font-bold text-pink-600 mb-4">
+   🛍️ Catálogo
+  </h2>
 
-            setShowCatalog(prev => {
+  <div className="w-12 h-1 bg-pink-500 mt-1 rounded-full"></div>
 
-              const newValue = !prev;
-
-              if (prev === true) {
-
-                setOpenSection(null);
-                setSelectedVariant({});
-
-              }
-
-              return newValue;
-
-            });
-
-          }}
-          className="bg-pink-500 text-white px-4 py-2 rounded-full"
-        >
-
-          {showCatalog
-            ? "Cerrar catálogo"
-            : "Ver catálogo"}
-
-        </button>
-
-      </div>
+</div>
 
     </section>
 

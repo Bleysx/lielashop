@@ -28,7 +28,7 @@ import AdminPage from "./admin/AdminPage";
 
 export default function LielashopMakeup() {
   // ---------------- PRODUCTS ----------------
-  const { products, loading } = useProducts();
+  const { products,  favorites, loading } = useProducts();
 
   // 🔴 FIX CRÍTICO: asegurar array válido siempre
   const safeProducts = products || [];
@@ -78,7 +78,7 @@ export default function LielashopMakeup() {
   }, []);
 
   // ---------------- DATA ----------------
-  const featuredProducts = safeProducts.slice(0, 4);
+ const safeFavorites = (favorites || []).slice(0, 4);
 
   // ---------------- ACTIONS ----------------
   const handleFavoriteClick = (product) => {
@@ -118,7 +118,7 @@ export default function LielashopMakeup() {
               />
 
               <Favorites
-                featuredProducts={featuredProducts}
+                featuredProducts={safeFavorites}
                 handleFavoriteClick={handleFavoriteClick}
                 showCatalog={showCatalog}
                 setShowCatalog={setShowCatalog}

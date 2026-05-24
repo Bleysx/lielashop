@@ -14,33 +14,12 @@ export default function Catalog({
   decreaseQty,
   addToCart
 }) {
-  if (!showCatalog) return null;
-  const hasResults =
-catalogSections.some((section) => {
-
-const items =
-getProductsByCategory(section.key);
-
-return items.some((product) => {
-
-const text = [
-product.name,
-product.description,
-product.category
-]
-.join(" ")
-.toLowerCase();
-
-return text.includes(
-search.toLowerCase()
-);
-
-});
-
-});
 
   return (
-    <section ref={catalogRef} className="existing-classes py-10 px-4">
+    <section
+  ref={catalogRef}
+  className="existing-classes pt-2 pb-10 px-4"
+>
      
      <div className="mb-6">
 
@@ -203,7 +182,7 @@ search.toLowerCase()
 
             {/* PRODUCTOS (ESTO ES LO QUE TE FALTABA) */}
             {isOpen && (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-4">
 
                 {items.length === 0 ? (
                   <p className="text-gray-400">Próximamente productos</p>
@@ -211,7 +190,7 @@ search.toLowerCase()
                   items.map((product) => (
                     <div
                       key={product.id}
-                      className="bg-white rounded-xl shadow-sm hover:shadow-md transition p-2 md:p-3 flex flex-col"
+                      className="bg-white rounded-2xl shadow-sm hover:shadow-md transition p-2 flex flex-col scale-[0.96]"
                     >
                       {/* IMÁGENES */}
                       <ImageCarousel
@@ -226,47 +205,44 @@ search.toLowerCase()
   }
 />
 
-                      <div className="p-2 flex flex-col flex-1">
-                        <p className="text-sm font-semibold leading-tight">
+                     <div className="pt-1 px-2 pb-2 flex flex-col">
+                        <p className="text-[13px] font-semibold leading-tight">
                           {product.name}
                         </p>
 
-                        {product.description && (
-                          <p className="text-xs text-gray-500 mt-1">
-                            {product.description}
-                          </p>
-                        )}
-
-                     <p className="text-pink-500 text-sm font-bold mt-1">
+                     <p className="text-pink-500 text-xs font-bold mt-2">
   {"$ " + Number(String(product.price).replace(/\D/g, "")).toLocaleString("en-US")}
 </p>
                       
-                        {/* VARIANTES */}
-                       {product.variants?.length > 0 && (
-                          <select
-                            className="w-full text-xs mt-2 border rounded-md p-1"
-                          value={selectedVariant?.[product.id] || ""}
-onChange={(e) =>
-  setSelectedVariant({
-    ...selectedVariant,
-    [product.id]: e.target.value,
-  })
-}
-                          >
-                            <option value="">
-                              Seleccionar tono o color
-                            </option>
+{/* VARIANTES */}
+{product.variants?.length > 0 && (
 
-                            {product.variants.map((v, i) => (
-  <option key={i} value={v.name}>
-    {v.name}
-  </option>
-))}
-                          </select>
-                        )}
+  <select
+    className="w-full text-xs mt-3 border rounded-md p-1"
+    value={selectedVariant?.[product.id] || ""}
+    onChange={(e) =>
+      setSelectedVariant({
+        ...selectedVariant,
+        [product.id]: e.target.value,
+      })
+    }
+  >
 
+    <option value="">
+      Seleccionar tono o color
+    </option>
+
+    {product.variants.map((v, i) => (
+      <option key={i} value={v.name}>
+        {v.name}
+      </option>
+    ))}
+
+  </select>
+
+)}
                         {/* CONTADOR */}
-                        <div className="flex justify-between items-center mt-auto bg-pink-50 rounded-full px-3 py-2">
+                        <div className="flex justify-between items-center mt-3 bg-pink-50 rounded-full px-3 py-2">
                           <button
                             onClick={() =>
   decreaseQty(

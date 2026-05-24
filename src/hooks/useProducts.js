@@ -46,5 +46,14 @@ setProducts(data || []);
     fetchProducts();
   }, []);
 
-  return { products, loading };
+  console.log("FAVORITES RAW CHECK:", products.map(p => ({
+  id: p.id,
+  is_favorite: p.is_favorite
+})));
+
+ const favorites = products.filter(
+  (p) => p.is_favorite === true || p.is_favorite === "true"
+);
+
+ return { products, favorites, loading };
 }

@@ -39,9 +39,9 @@ export default function ImageCarousel({
         decoding="async"
           style={{ objectFit: "cover" }}
         className={`w-full rounded-xl ${
-          featured
-            ? "h-48 object-cover bg-white"
-            : "h-56 md:h-72 object-cover"
+         featured
+? "h-44 object-cover bg-white"
+: "h-48 md:h-56 object-cover"
         }`}
       />
 

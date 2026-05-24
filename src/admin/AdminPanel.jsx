@@ -181,6 +181,27 @@ const deleteProduct = async (id) => {
 
   await loadProducts();
 };
+const toggleFavorite = async (p) => {
+   const favoritesCount = products.filter(x => x.is_favorite).length;
+
+  // 🚫 límite de 4 favoritos
+  if (!p.is_favorite && favoritesCount >= 4) {
+    alert("Solo puedes tener 4 favoritos");
+    return;
+  }
+  const { data, error } = await supabase
+    .from("products")
+    .update({ is_favorite: !p.is_favorite })
+    .eq("id", p.id)
+    .select();
+
+  if (error) {
+    console.error("ERROR FAVORITE:", error);
+    return;
+  }
+
+  await loadProducts();
+};
 const toggleActive = async (p) => {
   const { data, error } = await supabase
     .from("products")
@@ -581,7 +602,14 @@ const filtered = (products || [])
             >
               Editar
             </button>
-
+            <button
+  onClick={() => toggleFavorite(p)}
+  className={`px-3 py-1 rounded text-white ${
+    p.is_favorite ? "bg-pink-500" : "bg-gray-500"
+  }`}
+>
+  {p.is_favorite ? "❤️ Favorito" : "🤍 Marcar"}
+</button>
             <button
               onClick={() => toggleActive(p)}
               className="bg-gray-700 text-white px-3 py-1 rounded"
@@ -652,7 +680,14 @@ const filtered = (products || [])
                 >
                   Eliminar
                 </button>
-
+<button
+  onClick={() => toggleFavorite(p)}
+  className={`px-2 py-1 rounded text-xs text-white ${
+    p.is_favorite ? "bg-pink-500" : "bg-gray-500"
+  }`}
+>
+  {p.is_favorite ? "❤️" : "🤍"}
+</button>
               </td>
 
             </tr>
