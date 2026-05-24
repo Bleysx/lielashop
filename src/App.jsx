@@ -18,13 +18,14 @@ import { useCatalog } from "./hooks/useCatalog";
 import { useProducts } from "./hooks/useProducts";
 import { supabase } from "./lib/supabase";
 
+import WholesaleSection from "./components/WholesaleSection";
+import AdminPage from "./admin/AdminPage";
 import {
   BrowserRouter,
   Routes,
   Route
 } from "react-router-dom";
 
-import AdminPage from "./admin/AdminPage";
 
 export default function LielashopMakeup() {
   // ---------------- PRODUCTS ----------------
@@ -108,14 +109,26 @@ export default function LielashopMakeup() {
         <Route
           path="/"
           element={
-            <div className="bg-pink-50 min-h-screen text-gray-800">
+            <>
+            <div className="font-sans"></div>
+            <div className="w-full bg-white text-gray-700 text-[11px] py-1 text-center flex justify-center gap-1 items-center border-b border-pink-100">
+ <span>
+  📦 Mayoristas desde <span className="text-pink-500 font-medium">$50.000</span>
+</span>
+  <a
+    href="https://api.whatsapp.com/send/?phone=573017170457&text=Hola%2C+quiero+hacer+un+pedido+mayorista&type=phone_number&app_absent=0"
+    target="_blank"
+    rel="noreferrer"
+    className="underline font-medium"
+  >
+    Solicitar info
+  </a>
+
+</div> 
 
               <Header logoUrl={logoUrl} scrolled={scrolled} />
 
-              <Hero
-                setShowCatalog={setShowCatalog}
-                catalogRef={catalogRef}
-              />
+              <Hero setShowCatalog={setShowCatalog} catalogRef={catalogRef} />
 
               <Favorites
                 featuredProducts={safeFavorites}
@@ -133,10 +146,8 @@ export default function LielashopMakeup() {
                 catalogSections={catalogSections}
                 openSection={openSection}
                 setOpenSection={setOpenSection}
-
                 search={search}
                 setSearch={setSearch}
-                
                 getProductsByCategory={getProductsByCategory}
                 ImageCarousel={ImageCarousel}
                 selectedVariant={selectedVariant}
@@ -167,8 +178,7 @@ export default function LielashopMakeup() {
               />
 
               <Footer />
-
-            </div>
+            </>
           }
         />
 

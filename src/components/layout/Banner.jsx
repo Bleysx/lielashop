@@ -1,21 +1,19 @@
 export default function Banner() {
-
   return (
+   <section className="w-full px-4 pt-2 pb-6">
 
-    <section className="max-w-7xl mx-auto px-6 py-8">
+      <div className="rounded-xl bg-pink-50 border border-pink-100 py-6 text-center">
 
-      <div className="rounded-2xl bg-linear-to-r from-pink-200 via-pink-100 to-rose-100 py-10 text-center shadow-sm">
+        <p className="text-base md:text-lg text-pink-500 font-medium">
+          ✨ Cada producto resalta tu belleza única
+        </p>
 
-        <p className="text-pink-600 font-medium text-lg">
-
-          Cada producto resalta tu belleza única ✨
-
+        <p className="text-xs md:text-sm text-gray-500 mt-2">
+          Encuentra maquillaje ideal para tu estilo y ocasión
         </p>
 
       </div>
 
     </section>
-
   );
-
 }

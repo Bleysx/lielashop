@@ -27,9 +27,18 @@ export default function Catalog({
   return (
     <section
   ref={catalogRef}
+
+  
   className="existing-classes pt-2 pb-10 px-4"
 >
-     
+     {/* 👇 AQUÍ VA EL TÍTULO DEL CATÁLOGO */}
+<div className="mt-6 mb-6">
+  <h2 className="text-lg md:text-2xl font-bold text-pink-600 mb-4">
+    🛍️ Catálogo
+  </h2>
+
+  <div className="w-12 h-1 bg-pink-500 mt-1 rounded-full"></div>
+</div>
      <div className="mb-6">
 
   <div className="relative">
@@ -75,6 +84,7 @@ export default function Catalog({
   </div>
 
 </div>
+
 {
 search.trim()
 &&
@@ -160,7 +170,7 @@ search.toLowerCase()
           <div
             id={`section-${section.key}`}
             key={section.key}
-            className="mb-6 scroll-mt-24"
+            className="mb-4 scroll-mt-24"
           >
             {/* HEADER DE LA SECCIÓN */}
             <button

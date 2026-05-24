@@ -71,13 +71,7 @@ export default function Favorites({
 
       </div>
 
-<div className="mt-8 mb-1">
-
-  <h2 className="text-lg md:text-2xl font-bold text-pink-600 mb-4">
-   🛍️ Catálogo
-  </h2>
-
-  <div className="w-12 h-1 bg-pink-500 mt-1 rounded-full"></div>
+<div className="mt-2 mb-1">
 
 </div>
 
