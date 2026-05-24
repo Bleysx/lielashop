@@ -51,16 +51,23 @@ key: "accesorios"
 
   // ---------------- LOGIC ----------------
   const getProductsByCategory =
-    (cat) => {
+  (cat) => {
 
-      if (!cat) return [];
+    if (!cat) return [];
 
-     return products.filter(
-  (p) =>
-    p.category === cat &&
-    p.active !== false
-);
-    };
+    return products
+      .filter(
+        (p) =>
+          p.category === cat &&
+          p.active !== false
+      )
+      .sort(
+        (a, b) =>
+          new Date(b.created_at) -
+          new Date(a.created_at)
+      );
+
+};
 
   return {
 
