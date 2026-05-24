@@ -85,7 +85,13 @@ export function useCart() {
 
     const items = cart
       .map((p, i) => {
-        let text = `${i + 1}. ${p.name} x${p.qty} - ${p.price}`;
+         
+        const subtotal =
+  parsePrice(p.price) * p.qty;
+
+let text =
+`${i + 1}. ${p.name} x${p.qty} - ${formatTotal(subtotal)}`;
+        
         if (p.variantId) text += ` (Tono ${p.variantId})`;
         return text;
       })
