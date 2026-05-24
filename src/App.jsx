@@ -57,6 +57,10 @@ export default function LielashopMakeup() {
     removeFromCart,
     decreaseQty,
     getQty,
+
+    checkoutData,
+    setCheckoutData,
+
     total,
     formatTotal,
     buildWhatsAppMessage
@@ -174,6 +178,10 @@ export default function LielashopMakeup() {
                 removeFromCart={removeFromCart}
                 formatTotal={formatTotal}
                 total={total}
+
+                checkoutData={checkoutData}
+                setCheckoutData={setCheckoutData}
+
                 buildWhatsAppMessage={buildWhatsAppMessage}
               />
 

@@ -3,6 +3,14 @@ import { useState } from "react";
 export function useCart() {
   const [cart, setCart] = useState([]);
 
+  const [checkoutData, setCheckoutData] =
+useState({
+  name: "",
+  phone: "",
+  address: "",
+  payment: ""
+});
+
   const normalize = (v) => v ?? null;
 
   const addToCart = (product, variantId = null) => {
@@ -80,34 +88,61 @@ export function useCart() {
 
   const formatTotal = (v) => "$" + v.toLocaleString("es-CO");
 
-  const buildWhatsAppMessage = () => {
-    if (cart.length === 0) return "Hola, quiero hacer un pedido";
+const buildWhatsAppMessage = () => {
 
-    const items = cart
-      .map((p, i) => {
-         
-        const subtotal =
-  parsePrice(p.price) * p.qty;
+  if (cart.length === 0)
+    return "Hola, quiero hacer un pedido";
 
-let text =
+  const items = cart
+    .map((p, i) => {
+
+      const subtotal =
+        parsePrice(p.price) * p.qty;
+
+      let text =
 `${i + 1}. ${p.name} x${p.qty} - ${formatTotal(subtotal)}`;
-        
-        if (p.variantId) text += ` (Tono ${p.variantId})`;
-        return text;
-      })
-      .join("%0A");
 
-    return `Hola, quiero este pedido:%0A${items}%0A%0ATotal: ${formatTotal(
-      total
-    )}`;
-  };
+      if (p.variantId)
+        text += ` (Tono ${p.variantId})`;
 
+      return text;
+
+    })
+    .join("%0A");
+
+return `Hola, quiero este pedido:
+
+DATOS CLIENTE
+
+Nombre:
+${checkoutData.name}
+
+Teléfono:
+${checkoutData.phone}
+
+Dirección:
+${checkoutData.address}
+
+Método pago:
+${checkoutData.payment}
+
+PEDIDO
+
+${items.replace(/%0A/g, "\n")}
+
+Total:
+${formatTotal(total)}`;
+};
   return {
     cart,
     addToCart,
     removeFromCart,
     decreaseQty,
     getQty,
+
+    checkoutData,
+setCheckoutData,
+
     total,
     formatTotal,
     buildWhatsAppMessage,

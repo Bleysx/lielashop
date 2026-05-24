@@ -5,6 +5,8 @@ export default function CartDrawer({
   removeFromCart,
   formatTotal,
   total,
+  checkoutData,
+  setCheckoutData,
   buildWhatsAppMessage
 }) {
   if (!showSummary) return null;
@@ -81,9 +83,115 @@ export default function CartDrawer({
           Total: {formatTotal(total)}
         </p>
 
+{/* CHECKOUT */}
+
+<div className="mt-4 space-y-3">
+
+<input
+placeholder="Nombre"
+
+value={checkoutData.name}
+
+onChange={(e)=>
+setCheckoutData({
+...checkoutData,
+name:e.target.value
+})
+}
+
+className="
+w-full
+border
+rounded-lg
+p-3
+text-sm
+"
+/>
+
+<input
+
+placeholder="Número"
+
+value={checkoutData.phone}
+
+onChange={(e)=>
+setCheckoutData({
+...checkoutData,
+phone:e.target.value
+})
+}
+
+className="
+w-full
+border
+rounded-lg
+p-3
+text-sm
+"
+/>
+
+<input
+
+placeholder="Dirección"
+
+value={checkoutData.address}
+
+onChange={(e)=>
+setCheckoutData({
+...checkoutData,
+address:e.target.value
+})
+}
+
+className="
+w-full
+border
+rounded-lg
+p-3
+text-sm
+"
+/>
+
+<select
+
+value={checkoutData.payment}
+
+onChange={(e)=>
+setCheckoutData({
+...checkoutData,
+payment:e.target.value
+})
+}
+
+className="
+w-full
+border
+rounded-lg
+p-3
+text-sm
+"
+
+>
+
+<option value="">
+Método de pago
+</option>
+
+<option value="Transferencia">
+Transferencia
+</option>
+
+<option value="Efectivo">
+Efectivo
+</option>
+
+</select>
+
+</div>
+
         {/* WHATSAPP */}
         <a
-          href={`https://wa.me/573017170457?text=${buildWhatsAppMessage()}`}
+          href={`https://wa.me/573017170457?text=${encodeURIComponent(buildWhatsAppMessage())}`}
           className="block mt-4 bg-green-500 text-white text-center py-3 rounded-full"
         >
           Finalizar compra
