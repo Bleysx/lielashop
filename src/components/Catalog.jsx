@@ -15,6 +15,15 @@ export default function Catalog({
   addToCart
 }) {
 
+  const hasResults = catalogSections.some((section) =>
+  getProductsByCategory(section.key).some((product) => {
+    const text = `${product.name ?? ""} ${product.description ?? ""} ${product.category ?? ""}`
+      .toLowerCase();
+
+    return text.includes(search.toLowerCase());
+  })
+);
+
   return (
     <section
   ref={catalogRef}

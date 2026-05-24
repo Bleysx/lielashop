@@ -43,10 +43,10 @@ export function useCatalog(products = []) {
       title: "Cabello",
       key: "cabello"
     },
-   //{
- // title: "Accesorios",
-  //key: "accesorios"
-//}
+  {
+ title: "Accesorios",
+key: "accesorios"
+}
   ];
 
   // ---------------- LOGIC ----------------

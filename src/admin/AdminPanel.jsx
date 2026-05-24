@@ -103,7 +103,7 @@ const CATEGORIES = [
   "bases_corrector",
   "polvos",
   "cabello",
-  //"accesorios"
+  "accesorios"
 ];
 
 const [search, setSearch] = useState("");
