@@ -111,9 +111,9 @@ export default function LielashopMakeup() {
           element={
             <>
             <div className="font-sans"></div>
-            <div className="w-full bg-white text-gray-700 text-[11px] py-1 text-center flex justify-center gap-1 items-center border-b border-pink-100">
+            <div className="w-full bg-pink-100 text-gray-700 text-[11px] py-1 text-center flex justify-center gap-1 items-center border-b border-pink-100">
  <span>
-  📦 Mayoristas desde <span className="text-pink-500 font-medium">$50.000</span>
+  📦 Compras al por mayor desde <span className="text-pink-500 font-medium">$50.000</span>
 </span>
   <a
     href="https://api.whatsapp.com/send/?phone=573017170457&text=Hola%2C+quiero+hacer+un+pedido+mayorista&type=phone_number&app_absent=0"

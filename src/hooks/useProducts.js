@@ -9,14 +9,21 @@ export function useProducts() {
     const fetchProducts = async () => {
       setLoading(true);
 
-    const { data, error, count } = await supabase
-  .from("products")
+  const { data, error, count } = await supabase
+  .from("products_with_flags")
   .select("*", { count: "exact" })
-    .eq("deleted", false)
+  .eq("deleted", false)
   .eq("active", true);
 
-console.log("TOTAL DB:", count);
-console.log("PRODUCTOS:", data);
+console.log("ERROR:", error);
+console.log("DATA:", data);
+
+if (error) {
+  console.error("ERROR PRODUCTS:", error);
+  setProducts([]);
+  setLoading(false);
+  return;
+}
 
 const raros = data.filter(
   p =>
@@ -26,24 +33,14 @@ const raros = data.filter(
     !Array.isArray(p.images)
 );
 
-console.log(
- "PRODUCTOS RAROS:",
- raros
-);
+console.log("PRODUCTOS RAROS:", raros);
 
-      if (error) {
-        console.error("ERROR PRODUCTS:", error);
-        setProducts([]);
-        setLoading(false);
-        return;
-      }
-
-     console.log("SUPABASE PRODUCTS:", data);
 setProducts(data || []);
-      setLoading(false);
+setLoading(false);
     };
 
     fetchProducts();
+    
   }, []);
 
   console.log("FAVORITES RAW CHECK:", products.map(p => ({

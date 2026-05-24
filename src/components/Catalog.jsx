@@ -208,9 +208,30 @@ search.toLowerCase()
                 ) : (
                   items.map((product) => (
                     <div
-                      key={product.id}
-                      className="bg-white rounded-2xl shadow-sm hover:shadow-md transition p-2 flex flex-col scale-[0.96]"
-                    >
+  key={product.id}
+  className="relative bg-white rounded-2xl shadow-sm hover:shadow-md transition p-2 flex flex-col scale-[0.96]"
+>
+
+{product.is_new && (
+  <span
+    className="
+      absolute
+      top-2
+      left-2
+      bg-green-500
+      text-white
+      text-[10px]
+      font-bold
+      px-2
+      py-1
+      rounded-md
+      z-10
+    "
+  >
+    NUEVO
+  </span>
+)}
+
                       {/* IMÁGENES */}
                       <ImageCarousel
   images={
