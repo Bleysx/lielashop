@@ -84,108 +84,70 @@ export default function CartDrawer({
         </p>
 
 {/* CHECKOUT */}
+<div className="mt-6 space-y-4 rounded-xl border bg-white p-5 shadow-sm">
 
-<div className="mt-4 space-y-3">
+  <h2 className="text-sm font-semibold text-gray-700">
+    Información de pedido
+  </h2>
 
-<input
-placeholder="Nombre"
+  {/* Nombre */}
+  <input
+    placeholder="Nombre completo"
+    value={checkoutData.name}
+    onChange={(e) =>
+      setCheckoutData({ ...checkoutData, name: e.target.value })
+    }
+    className="
+      w-full rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm
+      outline-none transition
+      focus:border-black focus:bg-white focus:ring-2 focus:ring-black/10
+    "
+  />
 
-value={checkoutData.name}
+  {/* Teléfono */}
+  <input
+    placeholder="Número de teléfono"
+    value={checkoutData.phone}
+    onChange={(e) =>
+      setCheckoutData({ ...checkoutData, phone: e.target.value })
+    }
+    className="
+      w-full rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm
+      outline-none transition
+      focus:border-black focus:bg-white focus:ring-2 focus:ring-black/10
+    "
+  />
 
-onChange={(e)=>
-setCheckoutData({
-...checkoutData,
-name:e.target.value
-})
-}
+  {/* Dirección */}
+  <input
+    placeholder="Dirección de entrega"
+    value={checkoutData.address}
+    onChange={(e) =>
+      setCheckoutData({ ...checkoutData, address: e.target.value })
+    }
+    className="
+      w-full rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm
+      outline-none transition
+      focus:border-black focus:bg-white focus:ring-2 focus:ring-black/10
+    "
+  />
 
-className="
-w-full
-border
-rounded-lg
-p-3
-text-sm
-"
-/>
-
-<input
-
-placeholder="Número"
-
-value={checkoutData.phone}
-
-onChange={(e)=>
-setCheckoutData({
-...checkoutData,
-phone:e.target.value
-})
-}
-
-className="
-w-full
-border
-rounded-lg
-p-3
-text-sm
-"
-/>
-
-<input
-
-placeholder="Dirección"
-
-value={checkoutData.address}
-
-onChange={(e)=>
-setCheckoutData({
-...checkoutData,
-address:e.target.value
-})
-}
-
-className="
-w-full
-border
-rounded-lg
-p-3
-text-sm
-"
-/>
-
-<select
-
-value={checkoutData.payment}
-
-onChange={(e)=>
-setCheckoutData({
-...checkoutData,
-payment:e.target.value
-})
-}
-
-className="
-w-full
-border
-rounded-lg
-p-3
-text-sm
-"
-
->
-
-<option value="">
-Método de pago
-</option>
-
-<option value="Transferencia">
-Transferencia
-</option>
-
-<option value="Efectivo">
-Efectivo
-</option>
-
-</select>
+  {/* Método de pago */}
+  <select
+    value={checkoutData.payment}
+    onChange={(e) =>
+      setCheckoutData({ ...checkoutData, payment: e.target.value })
+    }
+    className="
+      w-full rounded-lg border border-gray-200 bg-gray-50 p-3 text-sm
+      outline-none transition
+      focus:border-black focus:bg-white focus:ring-2 focus:ring-black/10
+    "
+  >
+    <option value="">Método de pago</option>
+    <option value="Transferencia">Transferencia</option>
+    <option value="Efectivo">Efectivo</option>
+  </select>
 
 </div>
 

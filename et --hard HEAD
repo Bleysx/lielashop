@@ -1,0 +1,23 @@
+[33m4eff50d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Mejoras checkout funcional
+[33mdff2cf0[m Mejorar mensaje WhatsApp con subtotal por producto
+[33m3935290[m Nuevo automatico y ordenar productos recientes
+[33mc6a8524[m Agregar etiqueta NUEVO automatica con Supabase
+[33m7ead66b[m ajustes UI: banner, mayoristas, tipografía y spacing
+[33m022a418[m fix catalog search crash and stabilize favorites system
+[33m896f4a8[m base tienda con favoritos admin supabase
+[33m58cce08[m fix: cloudinary optimizacion automatica imagenes
+[33mf40b03d[m feat: buscador mejorado catalogo
+[33m19b2cd0[m feat: categoria accesorios y mejora catalogo
+[33m46511da[m feat: categorias, buscador y mejoras en catalogo/admin
+[33ma4171ea[m mejoras auth admin panel
+[33m3706d87[m[33m ([m[1;32mdev-admin[m[33m)[m fix: ajustes panel admin (delete, toggle, UI)
+[33m2e142d5[m Optimización panel admin, variantes y mejoras imágenes Cloudinary
+[33m10035bc[m fix: vercel rewrite for react router
+[33mf219f47[m mejoras admin panel: imagenes, filtros, ocultos
+[33m0489ff9[m Migracion completa a Supabase y correccion carrito
+[33m4de2c83[m conexion supabase base y catalogo inicial
+[33mf5054f8[m Optimización imágenes Cloudinary + fixes carrito
+[33mb7b765e[m fix: variantes de productos y carrito mejorado
+[33m43a8b5a[m Mejoras visuales mobile
+[33mf26389c[m ajustes responsive y limpieza de componentes
+[33m350efbb[m primer commit
