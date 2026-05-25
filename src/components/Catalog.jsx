@@ -29,10 +29,10 @@ export default function Catalog({
   ref={catalogRef}
 
   
-  className="existing-classes pt-2 pb-10 px-4"
+  className="existing-classes pt-0 pb-8 px-4"
 >
      {/* 👇 AQUÍ VA EL TÍTULO DEL CATÁLOGO */}
-<div className="mt-6 mb-6">
+<div className="mt-3 mb-3">
   <h2 className="text-lg md:text-2xl font-bold text-pink-600 mb-4">
     🛍️ Catálogo
   </h2>
@@ -170,7 +170,7 @@ search.toLowerCase()
           <div
             id={`section-${section.key}`}
             key={section.key}
-            className="mb-4 scroll-mt-24"
+            className="mb-3 scroll-mt-20"
           >
             {/* HEADER DE LA SECCIÓN */}
             <button
@@ -301,9 +301,10 @@ search.toLowerCase()
 
                           <button
                             disabled={
-                              product.hasVariants &&
-                              !selectedVariant?.[product.id]
-                            }
+  Array.isArray(product.variants) &&
+  product.variants.length > 0 &&
+  !selectedVariant?.[product.id]
+}
                             onClick={() =>
                               addToCart(product, selectedVariant?.[product.id])
                             }

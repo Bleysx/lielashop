@@ -598,13 +598,13 @@ const filtered = (products || [])
           <div className="flex gap-2 mt-3">
             <button
               onClick={() => editProduct(p)}
-              className="bg-blue-500 text-white px-3 py-1 rounded"
+              className="bg-blue-500 text-white px-2 py-1 rounded text-xs"
             >
               Editar
             </button>
             <button
   onClick={() => toggleFavorite(p)}
-  className={`px-3 py-1 rounded text-white ${
+  className={`px-2 py-1 rounded text-xs text-white ${
     p.is_favorite ? "bg-pink-500" : "bg-gray-500"
   }`}
 >
@@ -612,14 +612,14 @@ const filtered = (products || [])
 </button>
             <button
               onClick={() => toggleActive(p)}
-              className="bg-gray-700 text-white px-3 py-1 rounded"
+              className="bg-gray-700 text-white px-2 py-1 rounded text-xs"
             >
               {p.active ? "Ocultar" : "Activar"}
             </button>
 
             <button
               onClick={() => deleteProduct(p.id)}
-              className="bg-red-500 text-white px-3 py-1 rounded"
+              className="bg-red-500 text-white px-2 py-1 rounded text-xs"
             >
               Eliminar
             </button>

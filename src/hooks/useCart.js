@@ -11,6 +11,11 @@ useState({
   payment: ""
 });
 
+const isCheckoutValid =
+  checkoutData.name.trim() &&
+  checkoutData.phone.trim() &&
+  checkoutData.address.trim();
+
   const normalize = (v) => v ?? null;
 
   const addToCart = (product, variantId = null) => {
@@ -142,6 +147,7 @@ ${formatTotal(total)}`;
 
     checkoutData,
 setCheckoutData,
+isCheckoutValid,
 
     total,
     formatTotal,

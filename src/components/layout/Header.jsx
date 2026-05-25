@@ -3,7 +3,7 @@ export default function Header({
   scrolled
 }) {
   return (
-    <header className="sticky top-0 z-40 bg-white border-b border-pink-200 h-16">
+    <header className="sticky top-0 z-40 bg-white h-16">
       <div className="max-w-7xl mx-auto px-4 h-full flex items-center gap-3">
 
         <img

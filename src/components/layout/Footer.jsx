@@ -3,7 +3,7 @@ import FacebookIcon from "../icons/FacebookIcon";
 
 export default function Footer() {
   return (
-<footer className="border-t border-pink-200 bg-white py-8 text-center space-y-3">
+<footer className=" bg-white py-8 text-center space-y-3">
         <p className="font-semibold">Lielashop Makeup</p>
   
         <div className="flex justify-center gap-4 pt-2">

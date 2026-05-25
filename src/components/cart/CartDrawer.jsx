@@ -13,6 +13,12 @@ export default function CartDrawer({
 
   const safeCart = Array.isArray(cart) ? cart : [];
 
+  const isCheckoutValid =
+  checkoutData?.name?.trim() &&
+  checkoutData?.phone?.trim() &&
+  checkoutData?.address?.trim() &&
+  checkoutData?.payment?.trim();
+
   return (
     <div className="fixed inset-0 z-50 bg-black/40">
       <div className="absolute right-0 top-0 h-full w-full max-w-sm bg-white shadow-xl p-4 z-50">
@@ -153,12 +159,25 @@ export default function CartDrawer({
 
         {/* WHATSAPP */}
         <a
-          href={`https://wa.me/573017170457?text=${encodeURIComponent(buildWhatsAppMessage())}`}
-          className="block mt-4 bg-green-500 text-white text-center py-3 rounded-full"
-        >
-          Finalizar compra
-        </a>
-
+  onClick={(e) => {
+    if (!isCheckoutValid) {
+      e.preventDefault();
+      return;
+    }
+  }}
+  href={
+    isCheckoutValid
+      ? `https://wa.me/573017170457?text=${encodeURIComponent(buildWhatsAppMessage())}`
+      : "#"
+  }
+  className={`block mt-4 text-white text-center py-3 rounded-full transition ${
+    isCheckoutValid
+      ? "bg-green-500 hover:bg-green-600"
+      : "bg-gray-300 cursor-not-allowed"
+  }`}
+>
+  Finalizar compra
+</a>
       </div>
     </div>
   );

@@ -10,7 +10,7 @@ export default function Favorites({
 
   return (
 
-    <section className="p-6">
+    <section className="p-6 pt-2">
 
      <div className="mb-4">
 

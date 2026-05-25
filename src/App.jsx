@@ -132,6 +132,7 @@ export default function LielashopMakeup() {
 
               <Header logoUrl={logoUrl} scrolled={scrolled} />
 
+
               <Hero setShowCatalog={setShowCatalog} catalogRef={catalogRef} />
 
               <Favorites

@@ -5,7 +5,7 @@ export default function Hero({
 
   return (
     <section
-      className="text-center py-16 bg-cover bg-center relative"
+      className="text-center py-10 bg-cover bg-center relative mb-8"
       style={{
         backgroundImage:
           "url(https://media.istockphoto.com/id/1658893205/es/foto/inventar-productos-en-la-vista-superior-de-fondo-rosa.jpg?s=612x612&w=0&k=20&c=XX_FdY2MVCSnlJY-D9BuC-C6qCJAqStGokQRAoD58Go=)"
@@ -16,8 +16,8 @@ export default function Hero({
 
       <div className="relative">
 
-        <h1 className="text-5xl font-bold">
-          La belleza empieza aquí ✨
+        <h1 className="text-2xl font-bold">
+          ✨ La belleza empieza aquí ✨
         </h1>
 
         <p className="text-gray-600 mt-3">
