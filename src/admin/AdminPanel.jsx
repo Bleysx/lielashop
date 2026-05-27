@@ -1,704 +1,1198 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
-import axios from "axios";
 
 export default function AdminPanel() {
 
-  useEffect(() => {
-  const checkAuth = async () => {
-    const { data, error } = await supabase.auth.getSession();
-
-    if (error || !data.session) {
-      window.location.replace("/login");
-    }
-  };
-
-  checkAuth();
-}, []);
-
-useEffect(() => {
-  const { data: { subscription } } = supabase.auth.onAuthStateChange(
-    (event, session) => {
-      if (event === "SIGNED_OUT" || !session) {
-        window.location.replace("/login");
-      }
-    }
-  );
-
-  return () => subscription.unsubscribe();
-}, []);
-
-useEffect(() => {
-  let timer;
-
-  const logout = async () => {
-  await supabase.auth.signOut();
-
-  const channel = new BroadcastChannel("auth");
-  channel.postMessage("logout");
-  channel.close();
-
-  window.location.replace("/login");
-};
-
-  const resetTimer = () => {
-    if (timer) clearTimeout(timer);
-
-    timer = setTimeout(() => {
-      logout();
-    }, 15 * 60 * 1000); // 15 minutos
-  };
-
-  const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
-
-  events.forEach((event) =>
-    window.addEventListener(event, resetTimer)
-  );
-
-  resetTimer();
-
-  return () => {
-    if (timer) clearTimeout(timer);
-
-    events.forEach((event) =>
-      window.removeEventListener(event, resetTimer)
-    );
-  };
-}, []);
-
-useEffect(() => {
-  const syncLogout = (event) => {
-    if (event.key === "sb-session" && !event.newValue) {
-      window.location.replace("/login");
-    }
-  };
-
-  window.addEventListener("storage", syncLogout);
-
-  return () => {
-    window.removeEventListener("storage", syncLogout);
-  };
-}, []);
-
-useEffect(() => {
-  const channel = new BroadcastChannel("auth");
-
-  channel.onmessage = (event) => {
-    if (event.data === "logout") {
-      window.location.replace("/login");
-    }
-  };
-
-  return () => {
-    channel.close();
-  };
-}, []);
-
-const CATEGORIES = [
-  "labios",
-  "cuidado_facial",
-  "cejas_pestanas",
-  "rubor",
-  "sombras",
-  "bases_corrector",
-  "polvos",
-  "cabello",
-  "accesorios"
+const CATEGORIES=[
+"labios",
+"cuidado_facial",
+"cejas_pestanas",
+"rubor",
+"sombras",
+"bases_corrector",
+"polvos",
+"cabello",
+"accesorios"
 ];
 
-const [search, setSearch] = useState("");
-const [filterCategory, setFilterCategory] = useState("all");
-const [viewMode, setViewMode] = useState("cards"); // "cards" | "table" 
-const [products, setProducts] = useState([]);
-  const [filterStatus, setFilterStatus] = useState("all");
-  const [editing, setEditing] = useState(false);
+const [products,setProducts]=
+useState([]);
 
-  const [form, setForm] = useState({
-    id: null,
-    name: "",
-    price: "",
-    description: "",
-    category: "",
-    image: "",
-    images: [],
-    stock: 0,
-    variants: [],
-    hasVariants: false,
-    active: true
-  });
+const [search,setSearch]=
+useState("");
 
-  useEffect(() => {
-  const check = async () => {
-    const { data } = await supabase.auth.getUser();
+const [filterCategory,
+setFilterCategory]=
+useState("all");
 
-    if (!data?.user) {
-      window.location.replace("/login");
-    }
-  };
+const [filterStatus,
+setFilterStatus]=
+useState("all");
 
-  check();
-}, []);
+const [viewMode,
+setViewMode]=
+useState("cards");
 
-  const [variantName, setVariantName] = useState("");
+const normalizeProduct=(p)=>({
 
-  // ---------------- NORMALIZE ----------------
-  const normalizeProduct = (p) => ({
-    ...p,
-    images: Array.isArray(p.images) ? p.images : [],
-    variants: Array.isArray(p.variants) ? p.variants : []
-  });
+...p,
 
-  // ---------------- LOAD ----------------
-  const loadProducts = async () => {
-  const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .eq("deleted", false)
-    .order("created_at", { ascending: false });
+images:
+Array.isArray(p.images)
+?p.images
+:[],
 
-  if (!error) {
-    setProducts((data || []).map(normalizeProduct));
-  }
+variants:
+Array.isArray(p.variants)
+?p.variants
+:[]
+
+});
+
+const loadProducts=
+async()=>{
+
+const {data,error}=
+
+await supabase
+
+.from("products")
+
+.select("*")
+
+.eq("deleted",false)
+
+.order(
+"created_at",
+{
+ascending:false
+}
+);
+
+if(error)return;
+
+setProducts(
+
+(data||[])
+
+.map(
+normalizeProduct
+)
+
+);
+
 };
-const deleteProduct = async (id) => {
-  const ok = window.confirm("¿Seguro que quieres eliminar este producto?");
-  if (!ok) return;
 
-  console.log("ID A ELIMINAR:", id);
+useEffect(()=>{
 
-  const { data, error } = await supabase
-    .from("products")
-    .update({ deleted: true })
-    .eq("id", id)
-    .select();
+loadProducts();
 
-  if (error) {
-    console.error("ERROR SUPABASE DELETE:", error);
-    return;
-  }
+},[]);
 
-  console.log("UPDATE RESULT:", data);
+useEffect(()=>{
 
-  await loadProducts();
+const channel=
+
+supabase
+
+.channel(
+"products-realtime"
+)
+
+.on(
+
+"postgres_changes",
+
+{
+
+event:"*",
+
+schema:"public",
+
+table:"products"
+
+},
+
+()=>{
+
+loadProducts();
+
+}
+
+)
+
+.subscribe();
+
+return()=>{
+
+supabase.removeChannel(
+channel
+);
+
 };
-const toggleFavorite = async (p) => {
-   const favoritesCount = products.filter(x => x.is_favorite).length;
 
-  // 🚫 límite de 4 favoritos
-  if (!p.is_favorite && favoritesCount >= 4) {
-    alert("Solo puedes tener 4 favoritos");
-    return;
-  }
-  const { data, error } = await supabase
-    .from("products")
-    .update({ is_favorite: !p.is_favorite })
-    .eq("id", p.id)
-    .select();
+},[]);
 
-  if (error) {
-    console.error("ERROR FAVORITE:", error);
-    return;
-  }
+const deleteProduct=
+async(id)=>{
 
-  await loadProducts();
+const ok=
+
+window.confirm(
+"¿Eliminar producto?"
+);
+
+if(!ok)return;
+
+await supabase
+
+.from("products")
+
+.update({
+
+deleted:true
+
+})
+
+.eq("id",id);
+
+loadProducts();
+
 };
-const toggleActive = async (p) => {
-  const { data, error } = await supabase
-    .from("products")
-    .update({ active: !p.active })
-    .eq("id", p.id)
-    .select();
 
-  if (error) {
-    console.error("ERROR TOGGLE:", error);
-    return;
-  }
+const toggleFavorite=
+async(p)=>{
 
-  await loadProducts();
+const favorites=
+
+products.filter(
+
+x=>
+
+x.is_favorite
+
+).length;
+
+if(
+
+!p.is_favorite
+
+&&
+
+favorites>=4
+
+){
+
+alert(
+"Máximo 4 favoritos"
+);
+
+return;
+
+}
+
+await supabase
+
+.from("products")
+
+.update({
+
+is_favorite:
+!p.is_favorite
+
+})
+
+.eq("id",p.id);
+
+loadProducts();
+
 };
-  useEffect(() => {
-    loadProducts();
-  }, []);
 
-  // ---------------- REALTIME ----------------
-  useEffect(() => {
-    const channel = supabase
-      .channel("products-realtime")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "products" },
-        () => loadProducts()
-      )
-      .subscribe();
+const toggleActive=
+async(p)=>{
 
-    return () => supabase.removeChannel(channel);
-  }, []);
+await supabase
 
-  // ---------------- CLOUDINARY ----------------
-  const uploadImage = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "lielashop");
+.from("products")
 
-    const res = await axios.post(
-      "https://api.cloudinary.com/v1_1/dx17lxzey/image/upload",
-      formData
-    );
+.update({
 
-    return res.data.secure_url;
-  };
+active:
+!p.active
 
-  const handleAddImage = async (file) => {
-    if (!file) return;
+})
 
-    const url = await uploadImage(file);
+.eq("id",p.id);
 
-    setForm(prev => ({
-      ...prev,
-      images: [...(prev.images || []), url],
-      image: prev.image || url
-    }));
-  };
+loadProducts();
 
-  const removeImage = (i) => {
-    setForm(prev => ({
-      ...prev,
-      images: (prev.images || []).filter((_, index) => index !== i)
-    }));
-  };
+};
 
-  // ----------- SAVE (FIX FINAL VARIANTS BUG) ------------
-  const saveProduct = async () => {
+const filtered=
 
-    const payload = {
-      name: form.name,
-      price: Number(form.price),
-      description: form.description,
-      category: form.category,
-      image: form.images?.length ? form.images[0] : form.image,
+products
 
-      images: Array.isArray(form.images) ? form.images : [],
+.filter(p=>{
 
-      // 🔥 FIX REAL: NO fallback a existing, permite borrar correctamente
-      variants: Array.isArray(form.variants) ? form.variants : [],
+if(
 
-      stock: form.stock,
-      hasVariants: form.hasVariants,
-      active: form.active
-    };
+filterStatus===
+"active"
 
-    const { error } = form.id
-      ? await supabase.from("products").update(payload).eq("id", form.id)
-      : await supabase.from("products").insert([payload]);
+)
 
-    if (error) return;
+return p.active;
 
-    resetForm();
-    setEditing(false);
-  };
+if(
 
-  // ---------------- EDIT ----------------
-  const editProduct = (p) => {
-    const safe = normalizeProduct(p);
+filterStatus===
+"hidden"
 
-    setForm({
-      id: safe.id,
-      name: safe.name || "",
-      price: safe.price || "",
-      description: safe.description || "",
-      category: safe.category || "",
-      image: safe.image || "",
-      images: safe.images,
-      stock: safe.stock || 0,
-      variants: safe.variants,
-      hasVariants: safe.hasVariants || false,
-      active: safe.active ?? true
-    });
+)
 
-    setEditing(true);
-  };
+return !p.active;
 
-  const resetForm = () => {
-    setForm({
-      id: null,
-      name: "",
-      price: "",
-      description: "",
-      category: "",
-      image: "",
-      images: [],
-      stock: 0,
-      variants: [],
-      hasVariants: false,
-      active: true
-    });
+return true;
 
-    setVariantName("");
-  };
+})
 
-  const cancelEdit = () => {
-    resetForm();
-    setEditing(false);
-  };
+.filter(p=>{
 
-  // ---------------- VARIANTS FIX ----------------
-  const addVariant = () => {
-    if (!variantName.trim()) return;
+if(
 
-    setForm(prev => ({
-      ...prev,
-      variants: [
-        ...(Array.isArray(prev.variants) ? prev.variants : []),
-        { name: variantName.trim() }
-      ]
-    }));
+filterCategory===
+"all"
 
-    setVariantName("");
-  };
+)
 
-  const removeVariant = (index) => {
-    setForm(prev => ({
-      ...prev,
-      variants: (Array.isArray(prev.variants) ? prev.variants : [])
-        .filter((_, i) => i !== index)
-    }));
-  };
+return true;
 
-  // ---------------- FILTER ----------------
-const filtered = (products || [])
-  .filter(p => !p.deleted)
+return(
 
-  // estado activo/oculto
-  .filter(p => {
-    if (filterStatus === "active") return p.active === true;
-    if (filterStatus === "hidden") return p.active === false;
-    return true;
-  })
+p.category===
 
-  // categoría
-  .filter(p => {
-    if (filterCategory === "all") return true;
-    return p.category === filterCategory;
-  })
+filterCategory
 
-  // 🔍 BUSCADOR (ESTO ES LO QUE SE ROMPIÓ)
-  .filter(p =>
-    p.name?.toLowerCase().includes(search.toLowerCase())
-  );
+);
 
-  return (
-    <div className="p-6">
+})
 
-      <h1 className="text-2xl font-bold mb-4">Panel Admin</h1>
+.filter(p=>
 
-      {editing && (
-        <div className="mb-4 flex gap-2 items-center">
-          <span className="text-blue-600 text-sm">Editando producto</span>
+p.name
 
-          <button
-            onClick={cancelEdit}
-            className="bg-red-500 text-white px-3 py-1 rounded"
-          >
-            Terminar edición
-          </button>
-        </div>
-      )}
+?.toLowerCase()
 
-<div className="flex gap-2 mb-4 flex-wrap">
+.includes(
 
-  {/* SEARCH */}
-  <input
-    className="border p-2 rounded w-64"
-    placeholder="Buscar producto..."
-    value={search}
-    onChange={(e) => setSearch(e.target.value)}
-  />
+search
 
-  {/* CATEGORY FILTER */}
-  <select
-  value={filterCategory}
-  onChange={(e) => setFilterCategory(e.target.value)}
-  className="border p-2 rounded mb-4 ml-2"
+.toLowerCase()
+
+)
+
+);
+
+const editProduct=(p)=>{
+
+setEditingProduct({
+
+...normalizeProduct(p)
+
+});
+
+};
+
+const [editingProduct,setEditingProduct]=
+useState(null);
+
+ const [newVariant, setNewVariant] = useState("");
+
+return(
+
+<div className="p-6">
+
+<h1
+className="
+text-2xl
+font-bold
+mb-4
+"
 >
-  <option value="all">Todas las categorías</option>
 
-  {CATEGORIES.map((cat) => (
-    <option key={cat} value={cat}>
-      {cat}
-    </option>
-  ))}
-</select>
+Panel Admin
+
+</h1>
+
+{editingProduct && (
+
+<>
+
+<div
+onClick={()=>
+setEditingProduct(null)
+}
+className="
+fixed
+inset-0
+bg-black/40
+z-40
+"
+/>
+
+<div
+className="
+fixed
+top-0
+right-0
+h-full
+w-full
+sm:w-[420px]
+bg-white
+shadow-2xl
+z-50
+overflow-y-auto
+p-5
+"
+>
+
+<div
+className="
+flex
+justify-between
+items-center
+mb-5
+"
+>
+
+<h2
+className="
+font-bold
+text-xl
+"
+>
+
+Editar producto
+
+</h2>
+
+<button
+onClick={()=>
+setEditingProduct(null)
+}
+className="
+bg-gray-100
+hover:bg-gray-200
+w-9
+h-9
+rounded-full
+"
+>
+
+✕
+
+</button>
 
 </div>
 
-      {/* FILTERS */}
-      <div className="flex gap-2 mb-4">
+ <div
+      className="
+      border
+      rounded-2xl
+      bg-white
+      p-5
+      space-y-4
+      shadow-sm
+      "
+    >
+      <input
+        className="
+        w-full
+        border
+        border-pink-200
+        bg-pink-50
+        rounded-xl
+        p-3
+        outline-none
+        focus:ring-2
+        focus:ring-pink-200
+        focus:border-pink-400
+        "
+        placeholder="Nombre"
+        value={editingProduct.name}
+        onChange={(e) =>
+          setEditingProduct({
+            ...editingProduct,
+            name: e.target.value,
+          })
+        }
+      />
 
-        <button onClick={() => setFilterStatus("all")}
-          className={`px-3 py-1 border rounded ${filterStatus === "all" ? "bg-black text-white" : ""}`}>
-          Todos
-        </button>
+      <input
+        className="
+        w-full
+        border
+        border-pink-200
+        bg-pink-50
+        rounded-xl
+        p-3
+        outline-none
+        focus:ring-2
+        focus:ring-pink-200
+        focus:border-pink-400
+        "
+        placeholder="Precio"
+        value={editingProduct.price}
+        onChange={(e) => {
+          const value = e.target.value.replace(/\D/g, "");
 
-        <button onClick={() => setFilterStatus("active")}
-          className={`px-3 py-1 border rounded ${filterStatus === "active" ? "bg-black text-white" : ""}`}>
-          Activos
-        </button>
+          setEditingProduct({
+            ...editingProduct,
+            price: value,
+          });
+        }}
+      />
 
-        <button onClick={() => setFilterStatus("hidden")}
-          className={`px-3 py-1 border rounded ${filterStatus === "hidden" ? "bg-black text-white" : ""}`}>
-          Ocultos
-        </button>
+      <select
+        className="
+        w-full
+        border
+        border-pink-200
+        bg-pink-50
+        rounded-xl
+        p-3
+        outline-none
+        focus:ring-2
+        focus:ring-pink-200
+        focus:border-pink-400
+        "
+        value={editingProduct.category}
+        onChange={(e) =>
+          setEditingProduct({
+            ...editingProduct,
+            category: e.target.value,
+          })
+        }
+      >
+        <option value="">Categoría</option>
 
-      </div>
+        {CATEGORIES.map((cat) => (
+          <option key={cat} value={cat}>
+            {cat}
+          </option>
+        ))}
+      </select>
 
-      {/* FORM */}
-      <div className="border p-4 rounded-xl space-y-3">
+      {/* VARIANTES */}
+      <div
+        className="
+        bg-pink-50
+        border
+        border-pink-100
+        rounded-2xl
+        p-4
+        space-y-3
+        "
+      >
+        <p className="font-semibold text-gray-700">
+          🏷️ Variantes
+          <span className="ml-2 text-pink-500">
+            ({editingProduct.variants?.length || 0})
+          </span>
+        </p>
 
         <input
-          className="border p-2 w-full"
-          placeholder="Nombre"
-          value={form.name}
-          onChange={e => setForm({ ...form, name: e.target.value })}
+          id="newVariant"
+          value={newVariant}
+          onChange={(e) => setNewVariant(e.target.value)}
+          placeholder="Ej: Tono 01"
+          className="
+          w-full
+          border
+          border-pink-200
+          bg-white
+          rounded-xl
+          px-4
+          py-3
+          outline-none
+          focus:ring-2
+          focus:ring-pink-200
+          "
         />
 
-        <input
-  className="border p-2 w-full"
-  placeholder="Precio (solo números)"
-  value={form.price}
-  onChange={e => {
-    const value = e.target.value.replace(/\D/g, "");
-    setForm({ ...form, price: value });
-  }}
-/>
+        <button
+          onClick={() => {
+            if (!newVariant.trim()) return;
 
-<select
-  className="border p-2 w-full"
-  value={form.category}
-  onChange={(e) =>
-    setForm({ ...form, category: e.target.value })
-  }
->
-  <option value="">Selecciona categoría</option>
+            setEditingProduct({
+              ...editingProduct,
+              variants: [
+                ...(editingProduct.variants || []),
+                { name: newVariant },
+              ],
+            });
 
-  {CATEGORIES.map((cat) => (
-    <option key={cat} value={cat}>
-      {cat}
-    </option>
-  ))}
-</select>
+            setNewVariant("");
+          }}
+          className="
+          w-full
+          bg-pink-500
+          hover:bg-pink-600
+          transition
+          text-white
+          font-medium
+          rounded-xl
+          py-3
+          shadow-sm
+          "
+        >
+          + Agregar variante
+        </button>
 
-        <label className="bg-black text-white px-4 py-2 rounded cursor-pointer inline-block">
-          Subir imagen
-          <input
-            type="file"
-            hidden
-            onChange={e => handleAddImage(e.target.files[0])}
-          />
-        </label>
+        <div
+          className="
+          space-y-2
+          max-h-44
+          overflow-y-auto
+          "
+        >
+          {editingProduct.variants?.map((v, i) => (
+            <div
+              key={i}
+              className="
+              bg-white
+              border
+              rounded-xl
+              p-3
+              flex
+              justify-between
+              items-center
+              "
+            >
+              <span>🏷️ {v.name}</span>
 
-        <div className="flex gap-2 flex-wrap">
-          {form.images.map((img, i) => (
-            <div key={i} className="relative">
-              <img src={img} className="w-16 h-16 object-cover border" />
               <button
-                onClick={() => removeImage(i)}
-                className="absolute top-0 right-0 bg-red-500 text-white text-xs px-1"
+                onClick={() => {
+                  const updated = editingProduct.variants.filter(
+                    (_, idx) => idx !== i
+                  );
+
+                  setEditingProduct({
+                    ...editingProduct,
+                    variants: updated,
+                  });
+                }}
+                className="
+                bg-red-100
+                text-red-600
+                hover:bg-red-200
+                px-3
+                py-1
+                rounded-lg
+                text-xs
+                "
               >
-                ×
+                Eliminar
               </button>
             </div>
           ))}
         </div>
-
-        {/* VARIANTS */}
-        <div className="border p-3">
-
-          <div className="text-sm mb-2">
-            Variantes agregadas: {form.variants.length}
-          </div>
-
-          <input
-            className="border p-2 w-full mb-2"
-            placeholder="Nombre variante"
-            value={variantName}
-            onChange={e => setVariantName(e.target.value)}
-          />
-
-          <button
-            onClick={addVariant}
-            className="bg-blue-500 text-white px-3 py-1 rounded"
-          >
-            Agregar variante
-          </button>
-
-          <div className="mt-3 space-y-2">
-            {form.variants.map((v, i) => (
-              <div key={i} className="flex justify-between items-center border p-2 rounded">
-                <span>{v.name}</span>
-
-                <button
-                  onClick={() => removeVariant(i)}
-                  className="bg-red-500 text-white px-2 py-1 rounded text-xs"
-                >
-                  Eliminar
-                </button>
-              </div>
-            ))}
-          </div>
-
-        </div>
-
-        <button
-          onClick={saveProduct}
-          className="bg-black text-white w-full py-2 rounded"
-        >
-          {form.id ? "Actualizar" : "Crear"}
-        </button>
-
       </div>
 
-<div className="flex gap-2 mt-4 mb-2">
+      {/* GUARDAR */}
+      <button
+  onClick={async () => {
+    try {
+      if (!editingProduct?.id) {
+        console.error("Falta ID del producto");
+        return;
+      }
+
+      const payload = {
+        name: editingProduct.name,
+        price: Number(editingProduct.price),
+        category: editingProduct.category,
+        variants: editingProduct.variants || [],
+      };
+
+      console.log("Guardando:", payload);
+
+      const { data, error } = await supabase
+        .from("products")
+        .update(payload)
+        .eq("id", editingProduct.id)
+        .select();
+
+      if (error) {
+        console.error("Error guardando:", error);
+        return;
+      }
+
+      console.log("Guardado OK:", data);
+
+      // ✅ CIERRA EL PANEL DESPUÉS DE GUARDAR
+      setEditingProduct(null);
+
+    } catch (err) {
+      console.error("Error inesperado:", err);
+    }
+  }}
+  className="
+    w-full
+    bg-black
+    hover:bg-gray-900
+    text-white
+    rounded-xl
+    py-3
+    font-medium
+  "
+>
+  Guardar cambios
+</button>
+
+      {/* TERMINAR EDICIÓN */}
+      <button
+        onClick={() => {
+          setEditingProduct(null);
+        }}
+        className="
+        w-full
+        border
+        border-gray-200
+        rounded-xl
+        py-3
+        hover:bg-gray-50
+        "
+      >
+        Terminar edición
+      </button>
+    </div>
+</div>
+
+</>
+
+)}
+
+<div
+className="
+flex
+gap-2
+flex-wrap
+mb-4
+"
+>
+
+<input
+
+placeholder="
+Buscar producto
+"
+
+value={search}
+
+onChange={e=>
+
+setSearch(
+e.target.value
+)
+
+}
+
+className="
+border
+p-2
+rounded
+"
+
+/>
+
+<select
+
+value={
+filterCategory
+}
+
+onChange={e=>
+
+setFilterCategory(
+e.target.value
+)
+
+}
+
+className="
+border
+p-2
+rounded
+"
+
+>
+
+<option value="all">
+
+Todas
+
+</option>
+
+{
+
+CATEGORIES.map(
+
+cat=>(
+
+<option
+key={cat}
+value={cat}
+>
+
+{cat}
+
+</option>
+
+)
+
+)
+
+}
+
+</select>
+
+</div>
+
+<div className="flex flex-wrap gap-2">
+  <button
+    onClick={() => setFilterStatus("all")}
+    className="
+      px-4 py-2
+      rounded-xl
+      border
+      text-sm
+      font-medium
+      transition
+      active:scale-95
+      whitespace-nowrap
+
+      bg-white
+      border-gray-200
+      hover:bg-gray-50
+    "
+  >
+    Todos
+  </button>
+
+  <button
+    onClick={() => setFilterStatus("active")}
+    className="
+      px-4 py-2
+      rounded-xl
+      border
+      text-sm
+      font-medium
+      transition
+      active:scale-95
+      whitespace-nowrap
+
+      bg-white
+      border-gray-200
+      hover:bg-green-50
+      hover:border-green-200
+      hover:text-green-700
+    "
+  >
+    Activos
+  </button>
+
+  <button
+    onClick={() => setFilterStatus("hidden")}
+    className="
+      px-4 py-2
+      rounded-xl
+      border
+      text-sm
+      font-medium
+      transition
+      active:scale-95
+      whitespace-nowrap
+
+      bg-white
+      border-gray-200
+      hover:bg-red-50
+      hover:border-red-200
+      hover:text-red-600
+    "
+  >
+    Ocultos
+  </button>
+</div>
+<div className="mt-4 mb-4">
   <button
     onClick={() => setViewMode("cards")}
-    className={`px-3 py-1 border rounded ${
-      viewMode === "cards" ? "bg-black text-white" : ""
-    }`}
+    className="
+      px-4 py-2
+      rounded-xl
+      border
+      text-sm
+      font-medium
+      transition
+      active:scale-95
+      whitespace-nowrap
+
+      bg-white
+      border-gray-200
+      hover:bg-gray-50
+    "
   >
     Cards
   </button>
-
-  <button
-    onClick={() => setViewMode("table")}
-    className={`px-3 py-1 border rounded ${
-      viewMode === "table" ? "bg-black text-white" : ""
-    }`}
-  >
-    Tabla
-  </button>
 </div>
 
-  {/* LIST */}
-<div className="mt-6">
+{
 
-  {viewMode === "cards" && (
-    <div className="grid gap-4 mt-6">
-      {filtered.map(p => (
-        <div key={p.id} className="border p-4 rounded-xl">
+viewMode==="cards"
 
-          <h2 className="font-bold">{p.name}</h2>
-          <p>
-  {"$ " + Number(p.price).toLocaleString("en-US")}
+&&
+
+<div
+className="
+grid
+gap-4
+"
+>
+
+{
+
+filtered.map(
+
+p=>(
+
+<div
+key={p.id}
+className="
+bg-white
+border
+rounded-2xl
+p-4
+shadow-sm
+space-y-3
+"
+>
+
+<div className="flex gap-3">
+
+<img
+src={
+p.image ||
+"/placeholder.png"
+}
+className="
+w-20
+h-20
+rounded-xl
+object-cover
+border
+"
+/>
+
+<div className="flex-1">
+
+<h2
+className="
+font-semibold
+text-lg
+"
+>
+
+{p.name}
+
+</h2>
+
+<p
+className="
+text-pink-600
+font-bold
+"
+>
+
+$
+
+{Number(
+p.price
+).toLocaleString()}
+
 </p>
-          <p>{p.category}</p>
 
-          <span className={p.active ? "text-green-600" : "text-red-500"}>
-            {p.active ? "Activo" : "Oculto"}
-          </span>
-
-          <div className="flex gap-2 mt-3">
-            <button
-              onClick={() => editProduct(p)}
-              className="bg-blue-500 text-white px-2 py-1 rounded text-xs"
-            >
-              Editar
-            </button>
-            <button
-  onClick={() => toggleFavorite(p)}
-  className={`px-2 py-1 rounded text-xs text-white ${
-    p.is_favorite ? "bg-pink-500" : "bg-gray-500"
-  }`}
+<p
+className="
+text-sm
+text-gray-500
+"
 >
-  {p.is_favorite ? "❤️ Favorito" : "🤍 Marcar"}
-</button>
-            <button
-              onClick={() => toggleActive(p)}
-              className="bg-gray-700 text-white px-2 py-1 rounded text-xs"
-            >
-              {p.active ? "Ocultar" : "Activar"}
-            </button>
 
-            <button
-              onClick={() => deleteProduct(p.id)}
-              className="bg-red-500 text-white px-2 py-1 rounded text-xs"
-            >
-              Eliminar
-            </button>
-          </div>
+{p.category}
 
-        </div>
-      ))}
-    </div>
-  )}
+</p>
 
-  {viewMode === "table" && (
-    <div className="overflow-x-auto border rounded-xl mt-4">
-      <table className="w-full text-sm">
+<span
+className={
 
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="p-2 text-left">Nombre</th>
-            <th className="p-2 text-left">Precio</th>
-            <th className="p-2 text-left">Categoría</th>
-            <th className="p-2 text-left">Estado</th>
-            <th className="p-2 text-left">Acciones</th>
-          </tr>
-        </thead>
+p.active
 
-        <tbody>
-          {filtered.map(p => (
-            <tr key={p.id} className="border-t">
+?
 
-              <td className="p-2">{p.name}</td>
-              <td className="p-2">{p.price}</td>
-              <td className="p-2">{p.category}</td>
+"text-green-600"
 
-              <td className="p-2">
-                <span className={p.active ? "text-green-600" : "text-red-500"}>
-                  {p.active ? "Activo" : "Oculto"}
-                </span>
-              </td>
+:
 
-              <td className="p-2 flex gap-2">
+"text-red-500"
 
-                <button
-                  onClick={() => editProduct(p)}
-                  className="bg-blue-500 text-white px-2 py-1 rounded text-xs"
-                >
-                  Editar
-                </button>
+}
 
-                <button
-                  onClick={() => toggleActive(p)}
-                  className="bg-gray-700 text-white px-2 py-1 rounded text-xs"
-                >
-                  {p.active ? "Ocultar" : "Activar"}
-                </button>
-
-                <button
-                  onClick={() => deleteProduct(p.id)}
-                  className="bg-red-500 text-white px-2 py-1 rounded text-xs"
-                >
-                  Eliminar
-                </button>
-<button
-  onClick={() => toggleFavorite(p)}
-  className={`px-2 py-1 rounded text-xs text-white ${
-    p.is_favorite ? "bg-pink-500" : "bg-gray-500"
-  }`}
 >
-  {p.is_favorite ? "❤️" : "🤍"}
-</button>
-              </td>
 
-            </tr>
-          ))}
-        </tbody>
+{
 
-      </table>
-    </div>
-  )}
+p.active
+
+?
+
+"🟢 Activo"
+
+:
+
+"🔴 Oculto"
+
+}
+
+</span>
 
 </div>
-    </div>
-  );
+
+</div>
+
+{!!p.variants?.length && (
+
+<div
+className="
+border-t
+pt-3
+"
+>
+
+<p
+className="
+text-sm
+font-semibold
+mb-2
+"
+>
+
+Variantes:
+
+{
+
+p.variants.length
+
+}
+
+</p>
+
+<div
+className="
+flex
+flex-wrap
+gap-2
+"
+>
+
+{
+
+p.variants.map(
+
+(v,i)=>(
+
+<div
+
+key={i}
+
+className="
+bg-gray-100
+px-3
+py-1
+rounded-full
+text-sm
+flex
+items-center
+gap-2
+"
+
+>
+
+{v.name}
+
+</div>
+
+)
+
+)
+
+}
+
+</div>
+
+</div>
+
+)}
+
+<div
+className="
+flex
+flex-wrap
+gap-2
+pt-2
+"
+>
+
+<button
+
+onClick={()=>editProduct(p)}
+
+className="
+bg-blue-500
+text-white
+px-3
+py-2
+rounded-lg
+text-sm
+"
+
+>
+
+Editar
+
+</button>
+
+<button
+
+onClick={()=>
+
+toggleFavorite(p)
+
+}
+
+className={`
+px-3
+py-2
+rounded-lg
+text-sm
+text-white
+${
+p.is_favorite
+
+?
+
+"bg-pink-500"
+
+:
+
+"bg-gray-500"
+
+}
+`}
+
+>
+
+{
+
+p.is_favorite
+
+?
+
+"❤️ Favorito"
+
+:
+
+"🤍 Favorito"
+
+}
+
+</button>
+
+<button
+
+onClick={()=>
+
+toggleActive(p)
+
+}
+
+className="
+bg-gray-700
+text-white
+px-3
+py-2
+rounded-lg
+text-sm
+"
+
+>
+
+{
+
+p.active
+
+?
+
+"Ocultar"
+
+:
+
+"Activar"
+
+}
+
+</button>
+
+<button
+
+onClick={()=>
+
+deleteProduct(
+p.id
+)
+
+}
+
+className="
+bg-red-500
+text-white
+px-3
+py-2
+rounded-lg
+text-sm
+"
+
+>
+
+Eliminar
+
+</button>
+
+</div>
+
+</div>
+
+)
+
+)
+
+}
+
+</div>
+
+}
+
+</div>
+
+);
+
 }

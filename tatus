@@ -1,0 +1,149 @@
+[33mcommit 7354f82db2d3c480c691a8a2d6a71b2ded0a8c71[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Sun May 24 23:27:23 2026 -0500
+
+    Optimización admin panel mobile UI
+
+[33mcommit 256adb092198958d6613110c962f71caab71693b[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Sun May 24 19:38:41 2026 -0500
+
+    mejoras 2 checkout
+
+[33mcommit 4eff50d2587729f618b3a2c5d2cea88a0b2d61ff[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Sun May 24 18:58:48 2026 -0500
+
+    Mejoras checkout funcional
+
+[33mcommit dff2cf0e537249586baa8c72ab8e980cdd2666bd[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Sun May 24 18:06:02 2026 -0500
+
+    Mejorar mensaje WhatsApp con subtotal por producto
+
+[33mcommit 39352906e2ce4d075a468ee8657f309f59d501fe[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Sun May 24 15:40:04 2026 -0500
+
+    Nuevo automatico y ordenar productos recientes
+
+[33mcommit c6a8524739f823ee5c44e6ee38c7bf0c682ab0ab[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Sun May 24 15:21:11 2026 -0500
+
+    Agregar etiqueta NUEVO automatica con Supabase
+
+[33mcommit 7ead66b60816acb2b1fbf1d6f958b35cf6ba750a[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Sun May 24 04:03:27 2026 -0500
+
+    ajustes UI: banner, mayoristas, tipografía y spacing
+
+[33mcommit 022a418bdcdca7d728b9b0f41265d5892a1733ca[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Sat May 23 21:48:34 2026 -0500
+
+    fix catalog search crash and stabilize favorites system
+
+[33mcommit 896f4a8041cccab882e6466624ee6d0aea166d82[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Sat May 23 21:30:39 2026 -0500
+
+    base tienda con favoritos admin supabase
+
+[33mcommit 58cce087945e4929fb74e550a662facd82686655[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Fri May 22 17:41:24 2026 -0500
+
+    fix: cloudinary optimizacion automatica imagenes
+
+[33mcommit f40b03df8b4da8c97f36c12724532b49cf34b0f0[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Fri May 22 17:19:14 2026 -0500
+
+    feat: buscador mejorado catalogo
+
+[33mcommit 19b2cd07250948ebeb916a00465eec6d12169548[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Fri May 22 14:33:49 2026 -0500
+
+    feat: categoria accesorios y mejora catalogo
+
+[33mcommit 46511dae1a390550781fc574e2873a8421e5c99e[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Fri May 22 00:31:41 2026 -0500
+
+    feat: categorias, buscador y mejoras en catalogo/admin
+
+[33mcommit a4171eabbc6cf3b61f38372083e757492033f994[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Thu May 21 13:13:38 2026 -0500
+
+    mejoras auth admin panel
+
+[33mcommit 3706d873606c5c2fd13dae8512d9fde52f1a7252[m[33m ([m[1;32mdev-admin[m[33m)[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Thu May 21 04:01:52 2026 -0500
+
+    fix: ajustes panel admin (delete, toggle, UI)
+
+[33mcommit 2e142d5a7567f68a4d99177625007a920a9af1c2[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Thu May 21 02:27:42 2026 -0500
+
+    Optimización panel admin, variantes y mejoras imágenes Cloudinary
+
+[33mcommit 10035bc77e55ec6f5b28fa4e4a3e8a386b958ae9[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Wed May 20 19:18:07 2026 -0500
+
+    fix: vercel rewrite for react router
+
+[33mcommit f219f47410f37c5570ee74a525bf27829c4d8c5a[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Wed May 20 18:52:13 2026 -0500
+
+    mejoras admin panel: imagenes, filtros, ocultos
+
+[33mcommit 0489ff9d4f16b4e2704b0037d06b585a139b0087[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Wed May 20 14:30:14 2026 -0500
+
+    Migracion completa a Supabase y correccion carrito
+
+[33mcommit 4de2c83eb89a70520d2ba1b6e818e628a5492d4e[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Tue May 19 16:32:17 2026 -0500
+
+    conexion supabase base y catalogo inicial
+
+[33mcommit f5054f8b17b833c4d04287eacaa4b7ed6aac2363[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Tue May 19 01:31:00 2026 -0500
+
+    Optimización imágenes Cloudinary + fixes carrito
+
+[33mcommit b7b765ee69bb87c97a595e44f05ac1cd529f61cd[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Wed May 13 14:03:27 2026 -0500
+
+    fix: variantes de productos y carrito mejorado
+
+[33mcommit 43a8b5ad47e953dfe2c8706b7f332c53d39031ac[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Tue May 12 21:48:56 2026 -0500
+
+    Mejoras visuales mobile
+
+[33mcommit f26389c3f3e4482525bc22923aab6f526fdd8ebf[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Tue May 12 14:01:23 2026 -0500
+
+    ajustes responsive y limpieza de componentes
+
+[33mcommit 350efbbc02c801db3761b3bffa97c452350727b2[m
+Author: Bleysx <bleys1901@gmail.com>
+Date:   Tue May 12 00:42:58 2026 -0500
+
+    primer commit
