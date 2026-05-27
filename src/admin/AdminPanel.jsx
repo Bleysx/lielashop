@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { getCloudinaryUrl } from "../utils/cloudinary";
 
 export default function AdminPanel() {
 
@@ -483,6 +484,52 @@ rounded-full
         ))}
       </select>
 
+<label className="w-full block border border-dashed border-pink-300 bg-pink-50 rounded-xl p-4 text-center cursor-pointer hover:bg-pink-100 transition">
+  📷 Sube o cambia la imagen
+  <input
+    type="file"
+    accept="image/*"
+    className="hidden"
+    onChange={async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      const url = await handleAddImage(file);
+
+      setEditingProduct({
+        ...editingProduct,
+        images: [...(editingProduct.images || []), url],
+        image: editingProduct.image || url,
+      });
+    }}
+  />
+</label>
+<div className="flex gap-2 flex-wrap mt-2">
+  {editingProduct.images?.map((img, i) => (
+    <div key={i} className="relative">
+      <img
+        src={getCloudinaryUrl(img, 150)}
+        className="w-16 h-16 object-cover rounded-lg border"
+      />
+
+      <button
+        onClick={() => {
+          const updated = editingProduct.images.filter((_, idx) => idx !== i);
+
+          setEditingProduct({
+            ...editingProduct,
+            images: updated,
+            image: updated[0] || "",
+          });
+        }}
+        className="absolute -top-2 -right-2 bg-red-500 text-white w-5 h-5 rounded-full text-xs"
+      >
+        ×
+      </button>
+    </div>
+  ))}
+</div>
+
       {/* VARIANTES */}
       <div
         className="
@@ -880,17 +927,18 @@ space-y-3
 <div className="flex gap-3">
 
 <img
-src={
-p.image ||
-"/placeholder.png"
-}
-className="
-w-20
-h-20
-rounded-xl
-object-cover
-border
-"
+  src={
+    p.image
+      ? getCloudinaryUrl(p.image, 200)
+      : "/placeholder.png"
+  }
+  className="
+    w-20
+    h-20
+    rounded-xl
+    object-cover
+    border
+  "
 />
 
 <div className="flex-1">
