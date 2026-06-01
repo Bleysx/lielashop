@@ -20,7 +20,8 @@ const CATEGORIES=[
 "bases_corrector",
 "polvos",
 "cabello",
-"accesorios"
+"accesorios",
+"especiales"
 ];
 
 const [form,setForm]=useState({

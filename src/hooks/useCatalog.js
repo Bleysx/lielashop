@@ -46,6 +46,10 @@ export function useCatalog(products = []) {
   {
  title: "Accesorios",
 key: "accesorios"
+},
+ {
+ title: "Especiales",
+key: "especiales"
 }
   ];
 
