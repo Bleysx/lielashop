@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { getCloudinaryUrl } from "../utils/cloudinary";
+import axios from "axios";
 
 export default function AdminPanel() {
 
@@ -25,6 +26,7 @@ const [viewMode,setViewMode]=useState("cards");
 const normalizeProduct=(p)=>({
 
 ...p,
+
 
 images:
 Array.isArray(p.images)
@@ -291,6 +293,24 @@ useState(null);
 
  const [newVariant, setNewVariant] = useState("");
 
+ const uploadImage = async (file) => {
+  const formData = new FormData();
+
+  formData.append("file", file);
+
+  formData.append(
+    "upload_preset",
+    "lielashop"
+  );
+
+  const res = await axios.post(
+    "https://api.cloudinary.com/v1_1/dx17lxzey/image/upload",
+    formData
+  );
+
+  return res.data.secure_url;
+};
+
 return(
 
 <div className="p-6">
@@ -484,7 +504,7 @@ rounded-full
       const file = e.target.files?.[0];
       if (!file) return;
 
-      const url = await handleAddImage(file);
+      const url = await uploadImage(file);
 
       setEditingProduct({
         ...editingProduct,
@@ -650,6 +670,8 @@ rounded-full
         price: Number(editingProduct.price),
         category: editingProduct.category,
         variants: editingProduct.variants || [],
+         images: editingProduct.images || [],
+         image: editingProduct.images?.[0] || "",
       };
 
       console.log("Guardando:", payload);
