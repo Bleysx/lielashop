@@ -21,7 +21,7 @@ export default function CartDrawer({
 
   return (
     <div className="fixed inset-0 z-50 bg-black/40">
-      <div className="absolute right-0 top-0 h-full w-full max-w-sm bg-white shadow-xl p-4 z-50">
+      <div className="absolute right-0 top-0 h-full w-full max-w-sm bg-white shadow-xl p-4 z-50 overflow-y-auto">
 
         {/* HEADER */}
         <div className="flex justify-between items-center">
