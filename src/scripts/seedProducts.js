@@ -4,7 +4,7 @@ import products from "../data/products.optimized.js";
 
 // 🔐 pon tus keys aquí (solo para script local)
 const supabaseUrl = "https://uplwdpbwmwtrxlyempjq.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVwbHdkcGJ3bXd0cnhseWVtcGpxIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTIxMjQ4NywiZXhwIjoyMDk0Nzg4NDg3fQ.NWZGcAwjXXcLBVx8dVPjCmLbdPr8VQUyfL4eu3KjW4s";
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
